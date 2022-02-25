@@ -1,0 +1,50 @@
+﻿@model AuthenticationUserModel
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/Registration.css" />
+    <link href="~/css/bootstrap.min.css" rel="stylesheet">
+    <title>Authentication</title>
+</head>
+
+<body>
+    <main>
+        <div class="circle"></div>
+        <div class="register-form-container">
+            <form asp-controller="users" asp-action="login" method="post">
+                <h1 class="form-title">
+                    Authentication
+                </h1>
+                <div class="form-fields">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-field">
+                        <input type="email" asp-for="Email" placeholder="Email">
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="form-field">
+                        <input type="password" asp-for="Password" placeholder="Password">
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-buttons">
+                    <button class="button" type="submit">Login</button>
+                </div>
+                <div>
+                    <a href='@Url.Action("Registration", "Users")'>Registration</a>
+                </div>
+                <div>
+                    <a href='@Url.Action("GoogleLogin", "Users")'>Зайти с помощью Google</a>
+                </div>
+                <div>
+                    <a href='@Url.Action("FacebookLogin", "Users")'>Зайти с помощью Facebook</a>
+                </div>
+            </form>
+        </div>
+
+    </main>
+</body>
+</html>

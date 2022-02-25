@@ -1,0 +1,163 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="~/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/css/style.css" rel="stylesheet">
+    <script type="text/javascript" src="@Url.Content("~/js/bootstrap.bundle.min.js")"></script>
+    <title>@ViewBag.Title</title>
+</head>
+<body>
+    <header id="header">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <a asp-controller="home" asp-action="index" class="navbar-brand">WORLDVISION</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a asp-controller="home" asp-action="index" class="nav-link">Главная</a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-controller="categories" asp-action="getcategories" class="nav-link">Каталог</a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-controller="home" asp-action="about" class="nav-link">О магазине</a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-controller="home" asp-action="contacts" class="nav-link">Контакты</a>
+                        </li>
+                    </ul>
+
+
+                    @using (Html.BeginForm("search", "components", FormMethod.Get))
+                    {
+                        <div class="d-flex" style="margin-right: 10px">
+                            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="searchString">
+                            <button type="submit" class="btn btn1">Search</button>
+                        </div>
+                    }
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <ul class="navbar-nav me-2">
+                            <li class="nav-item">
+                                <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                                    <div class="btn-group" role="group">
+                                        <button id="btnGroupDrop1" type="button" class="btn btn1 dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                            @User.Identity.Name
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                                            <li><a class="dropdown-item" asp-action="profile" asp-controller="users" asp-route-email="@User.FindFirstValue(ClaimTypes.Name)">Профиль</a></li>
+                                            <li><a class="dropdown-item" asp-action="logout" asp-controller="users">Выйти</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="nav-item" style="margin-left: 10px">
+                                <div>
+                                    <a asp-action="cart" asp-controller="cart" asp-route-email="@User.Identity.Name"><img style="width: 40px; height: 40px" src="https://res.cloudinary.com/dtomjloda/image/upload/v1638114236/img/cart_p5go7e.jpg" /></a>
+                                </div>
+                            </li>
+                        </ul>
+                    }
+                    else
+                    {
+                        <ul class="navbar-nav me-2">
+                            <li class="nav-item">
+                                <a asp-controller="users" asp-action="authentication" class="btn btn-outline-primary">Войти</a>
+                            </li>
+                        </ul>
+
+                    }
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div id="main">
+        @RenderBody()
+    </div>
+    <footer id="footer" class="footer-1">
+        <div class="main-footer widgets-dark typo-light">
+            <div class="container">
+                <div class="row">
+
+                    <div class="col-xs-12 col-sm-6 col-md-3">
+                        <div class="widget subscribe no-box">
+                            <h5 class="widget-title">SmartStore<span></span></h5>
+                            <p>Мы рады вам предложить лучшие комплектующие. Только с нами вы можите собрать лучший компьютер!</p>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12 col-sm-6 col-md-3">
+                        <div class="widget no-box">
+                            <h5 class="widget-title">Ссылки<span></span></h5>
+                            <ul class="thumbnail-widget">
+                                <li>
+                                    <div class="thumb-content"><a asp-controller="home" asp-action="index">Главная</a></div>
+                                </li>
+                                <li>
+                                    <div class="thumb-content"><a asp-controller="categories" asp-action="getcategories">Каталог</a></div>
+                                </li>
+                                <li>
+                                    <div class="thumb-content"><a asp-controller="home" asp-action="about">О магазние</a></div>
+                                </li>
+                                <li>
+                                    <div class="thumb-content"><a asp-controller="home" asp-action="contacts">Контакты</a></div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12 col-sm-6 col-md-3">
+                        <div class="widget no-box">
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <h5 class="widget-title">Покупай у нас<span></span></h5>
+                                <p>Мы так рады, что вы с нами!</p>
+                            }
+                            else
+                            {
+                                <h5 class="widget-title">Покупай у нас<span></span></h5>
+                                <p>Зарегистрируйся на сайте, чтобы как можно удобнее совершать покупки.</p>
+                                <a asp-controller="authorization" asp-action="registration" class="btn btn1" target="_blank">Зарегистрироваться</a>
+                            }
+
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12 col-sm-6 col-md-3">
+
+                        <div class="widget no-box">
+                            <h5 class="widget-title">Связаться с нами<span></span></h5>
+
+                            <p><a href="mailto:magic@gmail.ru" title="glorythemes">magic@gmail.ru</a></p>
+                            <p>MTC - +375-33-222-33-44</p>
+                            <p>A1 - +375-44-222-33-44</p>
+                            <p>Life - +375-25-222-33-44</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-copyright">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <p>Copyright SmartStore © 2021. All rights reserved.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
