@@ -27,13 +27,13 @@ namespace WorldVision
                 })
                 .AddGoogle(options =>
                 {
-                    options.ClientId = "312938971846-ucjhqqefu0e4q8g1p96tomol2j2bn1re.apps.googleusercontent.com";
-                    options.ClientSecret = "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";
+                    options.ClientId = "xxx";
+                    options.ClientSecret = "xxx";
                 })
                 .AddFacebook(options =>
                 {
-                    options.AppId = "1116959762416997";
-                    options.AppSecret = "2a5e7d043de4428a325568196bcab37d";
+                    options.AppId = "xxx";
+                    options.AppSecret = "xxx";
                 });
             services.AddAuthorization();
             services.AddControllersWithViews();
