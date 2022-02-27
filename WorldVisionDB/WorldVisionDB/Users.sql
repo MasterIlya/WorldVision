@@ -5,6 +5,6 @@
 	[Password] NVARCHAR(50),
 	[FName] NVARCHAR(30),
 	[LName] NVARCHAR(30),
-	[RegistrationDate] DATE NOT NULL,
+	[RegistrationDate] DATETIME NOT NULL,
 	[Role] TINYINT NOT NULL,
 )

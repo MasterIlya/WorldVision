@@ -1,0 +1,56 @@
+﻿@model CompositeCreateReviewModel
+@{string msg = "";}
+@{
+    if (Model.ReviewModel == null || Model.ReviewModel.ReviewId == 0)
+    {
+        msg = "CreateReview";
+        ViewData["Title"] = "Create Review";
+    }
+    else
+    {
+        msg = "UpdateReview";
+        ViewData["Title"] = "Update Review";
+    }
+    Layout = "_Layout";
+}
+<div class="container">
+    <form asp-action="@msg" asp-controller="Reviews" asp-route-email="@User.FindFirstValue(ClaimTypes.Email)">
+        <div class="mb-3">
+            <label for="example-text-input" class="col-xs-2 col-form-label">Review Type</label>
+            <select class="form-control" asp-for="ReviewModel.ReviewTypeId">
+                @foreach (var type in Model.Types)
+                {
+                    <option value="@type.TypeId">@type.Type</option>
+                }
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Title</label>
+            <input type="text" asp-for="ReviewModel.Title" class="form-control" placeholder="Title">
+            <span asp-validation-for="ReviewModel.Title" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Content</label>
+            <textarea asp-for="ReviewModel.Content" class="form-control" placeholder="Content"></textarea>
+            <span asp-validation-for="ReviewModel.Content" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Tags</label>
+            <input type="text" asp-for="ReviewModel.Tags" class="form-control" placeholder="Tags">
+            <span asp-validation-for="ReviewModel.Tags" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Author Score</label>
+            <input type="number" asp-for="ReviewModel.AuthorScore" class="form-control" placeholder="Author Score">
+            <span asp-validation-for="ReviewModel.AuthorScore" class="text-danger"></span>
+        </div>
+        @if (msg == "UpdateReview")
+        {
+            <input class="btn btn-primary" type="submit" value="Update">
+        }
+        else
+        {
+            <input class="btn btn-primary" type="submit" value="Create">
+        }
+    </form>
+</div>

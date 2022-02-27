@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using WorldVision.Repositories.Interfaces;
 using WorldVision.Services.IServices;
@@ -46,7 +44,7 @@ namespace WorldVision.Services.Services
             var skip = (currentPage - 1) * DefaultUsersCount;
             var take = DefaultUsersCount;
 
-            var items =  await _usersRepository.GetAsync(skip, take);
+            var items = await _usersRepository.GetAsync(skip, take);
 
             var modelsList = items.Select(x => UsersMapper.Map(x)).ToList();
 

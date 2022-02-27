@@ -59,5 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Build Include="Users.sql" />
+    <Build Include="Reviews.sql" />
+    <Build Include="ReviewTypes.sql" />
   </ItemGroup>
 </Project>

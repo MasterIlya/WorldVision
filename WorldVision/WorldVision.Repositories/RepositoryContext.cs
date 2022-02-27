@@ -8,6 +8,8 @@ namespace WorldVision.Repositories
         private readonly string _conectionString;
 
         public DbSet<UserItem> UserItems { get; set; }
+        public DbSet<ReviewItem> ReviewItems { get; set; }
+        public DbSet<ReviewTypeItem> ReviewTypeItems { get; set; }
 
         public RepositoryContext(string conectionString)
         {
