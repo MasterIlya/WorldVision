@@ -85,5 +85,51 @@ namespace WorldVision.Services.Mappers
                 AuthorScore = item.AuthorScore
             };
         }
+
+        public static ReviewImageItem Map(ReviewImageModel model, int reviewId)
+        {
+            if (model == null)
+            {
+                return null;
+            }
+            return new ReviewImageItem
+            { 
+                ReviewId = reviewId,
+                ImageURL = model.ImageURL,
+                Size = model.ImageSize
+            };
+        }
+
+        public static ReviewImageModel Map(ReviewImageItem item)
+        {
+            if (item == null)
+            {
+                return null;
+            }
+            return new ReviewImageModel
+            {
+                ImageId = item.ImageId,
+                ImageName = item.ImageURL.Split(new char[] { '/' }).Last(),
+                ImageURL = item.ImageURL,
+                ImageSize = item.Size
+            };
+        }
+
+        public static ReviewItem UpdateMap(ReviewItem item, CreateReviewModel model)
+        {
+            if (item == null)
+            {
+                return null;
+            }
+
+            item.AuthorScore = model.AuthorScore;
+            item.Content = model.Content;
+            item.Tags = model.Tags;
+            item.Title = model.Title;
+            item.UpdateDate = DateTime.UtcNow;
+            item.ReviewTypeId = model.ReviewTypeId;
+
+            return item;
+        }
     }
 }

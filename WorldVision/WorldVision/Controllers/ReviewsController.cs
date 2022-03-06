@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using WorldVision.Services.IServices;
@@ -12,18 +15,21 @@ namespace WorldVision.Controllers
     {
         private readonly IReviewsService _reviewsService;
         private readonly IUsersService _usersService;
+        private readonly ICloudinaryService _cloudinaryService;
 
-        public ReviewsController(IReviewsService reviewsService, IUsersService usersService)
+
+        public ReviewsController(IReviewsService reviewsService, IUsersService usersService, ICloudinaryService cloudinaryService)
         {
             _reviewsService = reviewsService;
             _usersService = usersService;
+            _cloudinaryService = cloudinaryService;
         }
 
         [HttpGet]
-        public async Task<IActionResult> CreateReview()
+        public async Task<IActionResult> CreateReview(string imgUrl)
         {
             var model = new CompositeCreateReviewModel
-            { 
+            {
                 Types = await _reviewsService.GetAllReviewTypesAsync()
             };
 
@@ -31,7 +37,33 @@ namespace WorldVision.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateReview(CompositeCreateReviewModel model, string email)
+        public async Task UploadImage(IFormFile file, string email, string pageId)
+        {
+            var fileName = file.FileName;
+            var fileResult = await _cloudinaryService.LoadAsync(fileName, file.OpenReadStream());
+            var imgUrl = fileResult.Url.ToString();
+            var imgSize = fileResult.Bytes;
+            _cloudinaryService.AddToCache(imgUrl, imgSize, fileName, email, pageId);
+        }
+
+        [HttpPost]
+        public async Task DeleteImage(IFormFile file, string email, string pageId)
+        {
+            var models = _cloudinaryService.GetFromCache(pageId, email);
+            var url = models.FirstOrDefault(x => x.ImageName == file.FileName).ImageURL;
+            await _cloudinaryService.DeleteAsync(url);
+            _cloudinaryService.DeleteCacheElement(pageId, email, file.FileName);
+        }
+
+        [HttpPost]
+        public async Task DeleteImageOnUpdate(string fileName, int imageId)
+        {
+            await _cloudinaryService.DeleteImageOnUpdateAsync(fileName);
+            await _reviewsService.RemoveImageAsync(imageId);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateReview(CompositeCreateReviewModel model, string email, string pageId)
         {
             if (ModelState.IsValid)
             {
@@ -39,7 +71,11 @@ namespace WorldVision.Controllers
 
                 model.ReviewModel.UserId = user.UserId;
 
-                await _reviewsService.CreateAsync(model);
+                var reviewId = await _reviewsService.CreateAsync(model);
+
+                var models = _cloudinaryService.GetFromCache(pageId, email);
+
+                await _reviewsService.CreateReviewImagesAsync(models, reviewId);
 
                 return RedirectToAction("GetUserReviews", new { email });
             }
@@ -57,14 +93,15 @@ namespace WorldVision.Controllers
             var model = new CompositeCreateReviewModel
             {
                 ReviewModel = await _reviewsService.GetReviewAsync(reviewId),
-                Types = await _reviewsService.GetAllReviewTypesAsync()
+                Types = await _reviewsService.GetAllReviewTypesAsync(),
+                Images = await _reviewsService.GetImagesAsync(reviewId)
             };
 
             return View("CreateReview", model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateReview(CompositeCreateReviewModel model, string email)
+        public async Task<IActionResult> UpdateReview(CompositeCreateReviewModel model, string email, string pageId)
         {
             if (ModelState.IsValid)
             {
@@ -74,11 +111,19 @@ namespace WorldVision.Controllers
 
                 await _reviewsService.UpdateAsync(model);
 
+                var models = _cloudinaryService.GetFromCache(pageId, email);
+
+                if(models != null)
+                {
+                    await _reviewsService.CreateReviewImagesAsync(models, model.ReviewModel.ReviewId);
+                }
+
                 return RedirectToAction("GetUserReviews", new { email });
             }
             else
             {
                 model.Types = await _reviewsService.GetAllReviewTypesAsync();
+                model.Images = await _reviewsService.GetImagesAsync(model.ReviewModel.ReviewId);
 
                 return View(model);
             }
