@@ -10,6 +10,7 @@ namespace WorldVision.Repositories
         public DbSet<UserItem> UserItems { get; set; }
         public DbSet<ReviewItem> ReviewItems { get; set; }
         public DbSet<ReviewTypeItem> ReviewTypeItems { get; set; }
+        public DbSet<ReviewImageItem> ReviewImageItems { get; set; }
 
         public RepositoryContext(string conectionString)
         {

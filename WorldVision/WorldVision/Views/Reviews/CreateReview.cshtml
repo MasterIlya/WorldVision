@@ -1,5 +1,8 @@
 ﻿@model CompositeCreateReviewModel
-@{string msg = "";}
+@{
+    string msg = "";
+    string pageId = Guid.NewGuid().ToString();
+}
 @{
     if (Model.ReviewModel == null || Model.ReviewModel.ReviewId == 0)
     {
@@ -10,11 +13,22 @@
     {
         msg = "UpdateReview";
         ViewData["Title"] = "Update Review";
+        <style>
+            .dz-image img {
+                width: 130px;
+                height: 130px;
+            }
+        </style>
     }
     Layout = "_Layout";
 }
 <div class="container">
-    <form asp-action="@msg" asp-controller="Reviews" asp-route-email="@User.FindFirstValue(ClaimTypes.Email)">
+    <form id="form2" name="form2" asp-action="@msg" asp-controller="Reviews"
+          asp-route-email="@User.FindFirstValue(ClaimTypes.Email)" asp-route-pageId="@pageId"
+          enctype="multipart/form-data" data-parsley-validate class="form-horizontal form-label-left">
+        <div>
+            <input asp-for="ReviewModel.ReviewId" value="@Model.ReviewModel.ReviewId" hidden/>
+        </div>
         <div class="mb-3">
             <label for="example-text-input" class="col-xs-2 col-form-label">Review Type</label>
             <select class="form-control" asp-for="ReviewModel.ReviewTypeId">
@@ -41,8 +55,21 @@
         </div>
         <div class="mb-3">
             <label class="form-label">Author Score</label>
-            <input type="number" asp-for="ReviewModel.AuthorScore" class="form-control" placeholder="Author Score">
+            <input type="number" min="1" max="5" asp-for="ReviewModel.AuthorScore" class="form-control" placeholder="Author Score">
             <span asp-validation-for="ReviewModel.AuthorScore" class="text-danger"></span>
+        </div>
+        <div class="form-group" style="margin-top: 10px; margin-bottom: 10px">
+            <input id="hiddenEmail" value="@User.FindFirstValue(ClaimTypes.Email)" hidden>
+            <input id="pageId" value="@pageId" hidden>
+            <label class="control-label col-md-2" for="first-name">
+                Upload Photo <span class="required">*</span>
+            </label>
+            <div class="col-md-6" id="dropzone">
+                <div action="/Reviews/UploadImage" class="dropzone" id="uploader">
+                    Drop files here or click to upload.<br />
+                </div>
+            </div>
+            <span id="except" class="text-danger"></span>
         </div>
         @if (msg == "UpdateReview")
         {
@@ -54,3 +81,10 @@
         }
     </form>
 </div>
+<script>
+    var existingFiles = @Json.Serialize(Model.Images);
+</script>
+<script src="~/lib/dropzone/min/dropzone.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+<script src="~/js/widget.js"></script>
+<script src="~/js/Update.js"></script>

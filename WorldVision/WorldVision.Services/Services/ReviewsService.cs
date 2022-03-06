@@ -14,28 +14,34 @@ namespace WorldVision.Services.Services
         private readonly IReviewsRepository _reviewsRepository;
         private readonly IReviewTypesRepository _reviewTypesRepository;
         private readonly IUsersRepository _usersRepository;
+        private readonly IReviewImagesRepository _reviewImagesRepository;
         private const int DefaultUsersCount = 10;
         private const int DefaultCurrentPage = 1;
 
-        public ReviewsService(IReviewsRepository reviewsRepository, IReviewTypesRepository reviewTypesRepository, IUsersRepository usersRepository)
+        public ReviewsService(IReviewsRepository reviewsRepository, IReviewTypesRepository reviewTypesRepository,
+            IUsersRepository usersRepository, IReviewImagesRepository reviewImagesRepository)
         {
             _reviewsRepository = reviewsRepository;
             _reviewTypesRepository = reviewTypesRepository;
             _usersRepository = usersRepository;
+            _reviewImagesRepository = reviewImagesRepository;
         }
 
-        public async Task CreateAsync(CompositeCreateReviewModel model)
+        public async Task<int> CreateAsync(CompositeCreateReviewModel model)
         {
             var item = ReviewsMapper.Map(model.ReviewModel);
 
             await _reviewsRepository.CreateAsync(item);
+            return item.ReviewId;
         }
 
         public async Task UpdateAsync(CompositeCreateReviewModel model)
         {
-            var item = ReviewsMapper.Map(model.ReviewModel);
+            var item = await _reviewsRepository.GetAsync(model.ReviewModel.ReviewId);
 
-            await _reviewsRepository.UpdateAsync(item);
+            var newItem = ReviewsMapper.UpdateMap(item, model.ReviewModel);
+
+            await _reviewsRepository.UpdateAsync(newItem);
         }
 
         public async Task RemoveAsync(int reviewId)
@@ -93,5 +99,35 @@ namespace WorldVision.Services.Services
             return typeModels;
         }
 
+        public async Task CreateReviewImagesAsync(List<ReviewImageModel> models, int reviewId)
+        {
+            try
+            {
+                foreach (var model in models)
+                {
+                    var item = ReviewsMapper.Map(model, reviewId);
+                    await _reviewImagesRepository.CreateAsync(item);
+                }
+            }
+            catch(Exception ex)
+            {
+                var a = ex;
+            }
+        }
+
+        public async Task<List<ReviewImageModel>> GetImagesAsync(int reviewId)
+        {
+            var items = await _reviewImagesRepository.GetByReviewIdAsync(reviewId);
+            var models = items.Select(x => ReviewsMapper.Map(x)).ToList();
+
+            return models;
+        }
+
+        public async Task RemoveImageAsync(int imageId)
+        {
+            var item = await _reviewImagesRepository.GetAsync(imageId);
+            await _reviewImagesRepository.RemoveAsync(item);
+        }
+        
     }
 }
