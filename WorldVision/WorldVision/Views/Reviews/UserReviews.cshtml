@@ -4,6 +4,7 @@
     Layout = "_Layout";
 
 }
+
 <body>
     <div class="container">
         <div>
@@ -26,29 +27,12 @@
                     <tr>
                         <th scope="row">@((Model.CurrentPage - 1) * 10 + 1 + i)</th>
                         <td>
-                            <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#staticBackdrop@(i)">
-                                @Model.Models[i].Title
-                            </button>
-                            <div class="modal fade" id="staticBackdrop@(i)" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="staticBackdropLabel">@Model.Models[i].Title</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            @Model.Models[i].Content
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <a class="link-light" asp-action="getreview" asp-controller="reviews"
+                               asp-route-type="@Model.Models[i].ReviewType" asp-route-reviewId="@Model.Models[i].ReviewId">@Model.Models[i].Title</a>
                         </td>
                         <td>@Model.Models[i].ReviewType</td>
                         <td>@Model.Models[i].AuthorScore</td>
-                        <td>@Model.Models[i].CreateDate</td>
+                        <td>@Model.Models[i].UpdateDate</td>
                         <td>
                             <div class="list-group list-group-horizontal" style="display: flex; justify-content: center;">
                                 <a asp-action="UpdateReview" asp-controller="Reviews" asp-route-reviewId="@Model.Models[i].ReviewId" class="list-group-item btn-sm">Update</a>

@@ -1,0 +1,111 @@
+﻿@model CompositeReviewModel
+@{
+
+    Layout = "_Layout";
+}
+<link href="~/css/Carousel.css" rel="stylesheet">
+<style>
+    .carousel {
+        width: 800px;
+        margin-right: auto;
+    }
+
+        .carousel .carousel-item {
+            height: 400px;
+        }
+
+    .carousel-item img {
+        position: absolute;
+        object-fit: cover;
+        top: 0;
+        left: 0;
+        min-height: 400px;
+    }
+</style>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-8">
+                <div class="row">
+                    <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            @for (int i = 0; i < Model.Images.Count; i++)
+                            {
+                                if (i != 0)
+                                {
+                                    <div class="carousel-item">
+                                        <img src="@Model.Images[i].ImageURL" class="d-block w-100" alt="...">
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="carousel-item active">
+                                        <img src="@Model.Images[i].ImageURL" class="d-block w-100" alt="...">
+                                    </div>
+                                }
+                            }
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Предыдущий</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Следующий</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 20px">
+                    <h1 class="text-capitalize text-decoration-underline">@Model.Review.Title</h1>
+                    <p class="text-black-50">@Model.Review.UpdateDate.ToShortDateString()      @Model.Review.UserName     Score: @Model.Review.AuthorScore</p>
+                </div>
+                <div class="row">
+                    <p class="text-secondary">
+                        уже больше месяца и пока я здесь, я писал все интересное что здесь происходит и вот наконец есть возможность этим поделиться. Фотографий пока не будет, их я выложу или позже, или уже когда вернусь домой. Итак, понеслась:
+
+
+                        Первые впечатления
+
+                        Переночевав в гостинице в Гуаякиле, мы сели к агенту в машину и поехали на судно в Пуэрто Боливар. Доехали вопреки ожиданиям быстро, примерно за 3-4 часа. Погода была пасмурная и даже не смотря на то, что мы находимся недалеко от экватора, было прохладно. Почти все время, пока мы ехали, по обе стороны дороги были банановые плантации, но все равно в голове не укладывается: эти бананы грузят на суда в нескольких портах Эквадора десятками тысяч тонн каждый день, круглый год. Это ж несчастные бананы должны расти быстрее чем грибы.
+
+                        Дороги.
+                        Дороги в Эквадоре практически идеальные, хотя населенные пункты выглядят очень бедно. На дорогах много интересных машин, например очень много грузовиков - древних Фордов, которые я никогда раньше не видел. А еще несколько раз на глаза попадались старенькие Жигули :) А еще если кого-то обгоняешь и есть встречная машина, она обязательно включает фары. На больших машинах - грузовиках и автобусах, обязательно красуется местный тюнинг: машины разукрашенные, либо в наклейках, и обязательно везде огромное множество светодиодов, как будто новогодние елки едут и переливаются всеми цветами.
+
+                        Судно.
+                        На первый взгляд судно неплохое, в относительно хорошем состоянии, хотя и 92 года постройки. Экипаж 19 человек - 11 русских и 8 филиппинцев, включая повара. Говорят, периодически становится тоскливо от егошних кулинарных изысков. Филиппинцы здесь рядовой состав, за ними постоянно нужно следить чтобы не натворили чего, среди них только один матрос по-настоящему ответственный и с руками из нужного места, все понимает с полуслова. Остальные - типичные Равшаны да Джамшуты. А еще один из них - гомосек О___о, в добавок к этому он опасный человек, в том плане, что легко впадает в состояние ступора и отключает мозг: был случай как он закрыл одного матроса в трюме, тот орал и тарабанил внутри, это заметил боцман, начал орать на этого персонажа, который, в свою очередь испуганно выпучив глаза, трясущимися руками продолжал закручивать барашки. В итоге боцман его отодвинул и выпустил матроса из трюма. Общение на английском языке, но из-за акцента не всегда с первого раз понятно что филиппинцы говорят, особенно по рации. Напимер, говорит он тебе: Бикарпуль! Бикарпуль! А потом, когда уже поздно, выясняется что это было "Be careful!"
+                    </p>
+                </div>
+                <hr />
+                <div class="row" style="clear: both">
+                    <h5 style="float: left;">Tags</h5>
+                    <p style="float: right;">@Model.Review.Tags</p>
+                </div>
+            </div>
+            <div class="col-3" style="margin-left: auto">
+                <table class="table">
+                    <thead>
+                        <tr style="text-align: center">
+                            <th>
+                                <h2>Last reviews in this category</h2>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody style="text-align: center; ">
+                        @foreach (var review in Model.LastReviewsInCategory)
+                        {
+                            <tr>
+                                <td>
+                                    <a class="btn btn-outline text-black" asp-action="getreview" asp-controller="reviews"
+                                       asp-route-type="@review.ReviewType" asp-route-reviewId="@review.ReviewId">@review.Title</a>
+                                    <p class="text-black-50">
+                                        @review.UpdateDate.ToShortDateString()     @review.UserName
+                                    </p>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>

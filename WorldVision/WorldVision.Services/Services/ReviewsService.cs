@@ -15,7 +15,7 @@ namespace WorldVision.Services.Services
         private readonly IReviewTypesRepository _reviewTypesRepository;
         private readonly IUsersRepository _usersRepository;
         private readonly IReviewImagesRepository _reviewImagesRepository;
-        private const int DefaultUsersCount = 10;
+        private const int DefaultReviewsCount = 10;
         private const int DefaultCurrentPage = 1;
 
         public ReviewsService(IReviewsRepository reviewsRepository, IReviewTypesRepository reviewTypesRepository,
@@ -53,11 +53,9 @@ namespace WorldVision.Services.Services
             await _reviewsRepository.UpdateAsync(item);
         }
 
-        public async Task<CreateReviewModel> GetReviewAsync(int reviewId)
+        public async Task<CreateReviewModel> GetReviewAsyncForUpdate(int reviewId)
         {
             var item = await _reviewsRepository.GetAsync(reviewId);
-
-            var types = await _reviewTypesRepository.GetAllAsync();
 
             var review = ReviewsMapper.Map(item);
 
@@ -71,15 +69,16 @@ namespace WorldVision.Services.Services
                 currentPage = DefaultCurrentPage;
             }
 
-            var skip = (currentPage - 1) * DefaultUsersCount;
-            var take = DefaultUsersCount;
+            var skip = (currentPage - 1) * DefaultReviewsCount;
+            var take = DefaultReviewsCount;
 
             var user = await _usersRepository.GetByEmailAsync(email);
+            var fullName = $"{user.FName} {user.LName}";
 
             var items = await _reviewsRepository.GetAsync(skip, take, user.UserId);
             var typeItems = await _reviewTypesRepository.GetAllAsync();
 
-            var modelsList = items.Select(x => ReviewsMapper.Map(x, typeItems)).ToList();
+            var modelsList = items.Select(x => ReviewsMapper.Map(x, typeItems, fullName)).ToList();
 
             var elementsCount = await _reviewsRepository.GetCountAsync(user.UserId);
 
@@ -101,17 +100,10 @@ namespace WorldVision.Services.Services
 
         public async Task CreateReviewImagesAsync(List<ReviewImageModel> models, int reviewId)
         {
-            try
+            foreach (var model in models)
             {
-                foreach (var model in models)
-                {
-                    var item = ReviewsMapper.Map(model, reviewId);
-                    await _reviewImagesRepository.CreateAsync(item);
-                }
-            }
-            catch(Exception ex)
-            {
-                var a = ex;
+                var item = ReviewsMapper.Map(model, reviewId);
+                await _reviewImagesRepository.CreateAsync(item);
             }
         }
 
@@ -128,6 +120,41 @@ namespace WorldVision.Services.Services
             var item = await _reviewImagesRepository.GetAsync(imageId);
             await _reviewImagesRepository.RemoveAsync(item);
         }
-        
-    }
+
+        public async Task<List<ReviewModel>> GetReviewsInCategory(int categoryId)
+        {
+            var take = DefaultReviewsCount;
+
+            var items = await _reviewsRepository.GetReviewsInCategory(categoryId, take);
+
+            var typeItems = await _reviewTypesRepository.GetAllAsync();
+
+            var ids = items.Select(x => x.UserId).Distinct().ToList();
+
+            var users = await _usersRepository.GetUsersAsync(ids);
+
+            var usersToDict = users.ToDictionary(x => x.UserId);
+
+            var models = items.Select(x => ReviewsMapper.Map(x, typeItems, usersToDict)).ToList();
+
+            return models;
+        }
+
+        public async Task<CompositeReviewModel> GetReviewAsync(int reviewId, string type)
+        {
+            var types = await _reviewTypesRepository.GetAllAsync();
+            var typeId = types.FirstOrDefault(x => x.ReviewType == type).ReviewTypeId;
+            var review = await _reviewsRepository.GetAsync(reviewId);
+            var userItem = await _usersRepository.GetAsync(review.UserId);
+            var fullName = $"{userItem.FName} {userItem.LName}";
+
+            return new CompositeReviewModel
+            {
+                Review = ReviewsMapper.Map(review, types, fullName),
+                Images = await GetImagesAsync(reviewId),
+                LastReviewsInCategory = await GetReviewsInCategory(typeId)
+                
+            };
+        }
+    } 
 }
