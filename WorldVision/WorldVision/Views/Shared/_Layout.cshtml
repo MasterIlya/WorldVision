@@ -13,14 +13,14 @@
 </head>
 <body>
     <header id="header">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <nav class="navbar navbar-expand-md navbar-light bg-light">
             <div class="container-fluid">
-                <a asp-controller="home" asp-action="index" class="navbar-brand">WORLDVISION</a>
+                <a asp-controller="home" asp-action="index" class="navbar-brand fs-1">WORLDVISION</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 fs-4">
                         <li class="nav-item">
                             <a asp-controller="home" asp-action="index" class="nav-link">Main</a>
                         </li>
@@ -152,6 +152,7 @@
             </div>
         </div>
     </footer>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
     <script type="text/javascript" src="@Url.Content("~/js/bootstrap.bundle.min.js")"></script>
 </body>
 </html>

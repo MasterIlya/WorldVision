@@ -8,6 +8,7 @@ namespace WorldVision.Services.Models
     {
         public int ReviewId { get; set; }
         public int UserId { get; set; }
+        public string UserName { get; set; }
         public string ReviewType { get; set; }
         public string Tags { get; set; }
         public string Title { get; set; }

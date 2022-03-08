@@ -28,6 +28,17 @@ namespace WorldVision.Repositories.Repositories
             return await GetItems().FirstOrDefaultAsync(x => x.Email == email.Trim().ToLower());
         }
 
+        public async Task<List<UserItem>> GetUsersAsync(List<int> ids)
+        {
+            List<UserItem> users = new List<UserItem>();
+            foreach(var id in ids)
+            {
+                users.Add(await GetAsync(id));
+            }
+
+            return users.ToList();
+        }
+
         public async Task<int> GetCountAsync()
         {
             return await GetItems().CountAsync();

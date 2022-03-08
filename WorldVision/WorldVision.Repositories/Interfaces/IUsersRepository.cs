@@ -15,5 +15,6 @@ namespace WorldVision.Repositories.Interfaces
         public Task<List<UserItem>> GetAsync(int skip, int take);
         public Task<UserItem> GetByEmailAsync(string email);
         public Task<int> GetCountAsync();
+        public Task<List<UserItem>> GetUsersAsync(List<int> ids);
     }
 }

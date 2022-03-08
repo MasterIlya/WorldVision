@@ -19,7 +19,6 @@ namespace WorldVision.Repositories.Repositories
             return await GetItems()
                 .Where(x => x.UserId == userId && !x.Delisted)
                 .OrderByDescending(x => x.CreateDate)
-                .Skip(skip)
                 .Take(take)
                 .ToListAsync();
         }
@@ -30,6 +29,15 @@ namespace WorldVision.Repositories.Repositories
                 .Where(x => !x.Delisted)
                 .OrderByDescending(x => x.CreateDate)
                 .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+        }
+
+        public async Task<List<ReviewItem>> GetReviewsInCategory(int categoryId, int take)
+        {
+            return await GetItems()
+                .Where(x => x.ReviewTypeId == categoryId)
+                .OrderByDescending(x => x.UpdateDate)
                 .Take(take)
                 .ToListAsync();
         }

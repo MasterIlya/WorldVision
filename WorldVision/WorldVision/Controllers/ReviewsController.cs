@@ -92,7 +92,7 @@ namespace WorldVision.Controllers
         {
             var model = new CompositeCreateReviewModel
             {
-                ReviewModel = await _reviewsService.GetReviewAsync(reviewId),
+                ReviewModel = await _reviewsService.GetReviewAsyncForUpdate(reviewId),
                 Types = await _reviewsService.GetAllReviewTypesAsync(),
                 Images = await _reviewsService.GetImagesAsync(reviewId)
             };
@@ -142,6 +142,13 @@ namespace WorldVision.Controllers
             var reviews = await _reviewsService.GetUserReviewsAsync(currentPage, email);
 
             return View("UserReviews", reviews);
+        }
+
+        public async Task<IActionResult> GetReview(int reviewId, string type)
+        {
+            var model = await _reviewsService.GetReviewAsync(reviewId, type);
+
+            return View("Review", model);
         }
     }
 }

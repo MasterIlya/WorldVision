@@ -28,7 +28,7 @@ namespace WorldVision.Services.Mappers
             };
         }
 
-        public static ReviewModel Map(ReviewItem item, List<ReviewTypeItem> reviewTypes)
+        public static ReviewModel Map(ReviewItem item, List<ReviewTypeItem> reviewTypes, string name)
         {
             if (item == null)
             {
@@ -38,6 +38,29 @@ namespace WorldVision.Services.Mappers
             {
                 ReviewId = item.ReviewId,
                 UserId = item.UserId,
+                UserName = name,
+                ReviewType = reviewTypes.FirstOrDefault(x => x.ReviewTypeId == item.ReviewTypeId).ReviewType,
+                Tags = item.Tags,
+                Title = item.Title,
+                Content = item.Content,
+                AuthorScore = item.AuthorScore,
+                CreateDate = item.CreateDate,
+                UpdateDate = item.UpdateDate,
+                Delisted = item.Delisted
+            };
+        }
+
+        public static ReviewModel Map(ReviewItem item, List<ReviewTypeItem> reviewTypes, Dictionary<int, UserItem> users)
+        {
+            if (item == null)
+            {
+                return null;
+            }
+            return new ReviewModel
+            {
+                ReviewId = item.ReviewId,
+                UserId = item.UserId,
+                UserName = $"{users[item.UserId].FName} {users[item.UserId].LName}",
                 ReviewType = reviewTypes.FirstOrDefault(x => x.ReviewTypeId == item.ReviewTypeId).ReviewType,
                 Tags = item.Tags,
                 Title = item.Title,
