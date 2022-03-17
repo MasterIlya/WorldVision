@@ -62,5 +62,6 @@
     <Build Include="Reviews.sql" />
     <Build Include="ReviewTypes.sql" />
     <Build Include="ReviewImages.sql" />
+    <Build Include="ReviewLikes.sql" />
   </ItemGroup>
 </Project>

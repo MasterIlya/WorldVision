@@ -26,9 +26,12 @@
     <form id="form2" name="form2" asp-action="@msg" asp-controller="Reviews"
           asp-route-email="@User.FindFirstValue(ClaimTypes.Email)" asp-route-pageId="@pageId"
           enctype="multipart/form-data" data-parsley-validate class="form-horizontal form-label-left">
-        <div>
-            <input asp-for="ReviewModel.ReviewId" value="@Model.ReviewModel.ReviewId" hidden/>
-        </div>
+        @if (msg == "UpdateReview")
+        {
+            <div>
+                <input asp-for="ReviewModel.ReviewId" value="@Model.ReviewModel.ReviewId" hidden />
+            </div>
+        }
         <div class="mb-3">
             <label for="example-text-input" class="col-xs-2 col-form-label">Review Type</label>
             <select class="form-control" asp-for="ReviewModel.ReviewTypeId">
