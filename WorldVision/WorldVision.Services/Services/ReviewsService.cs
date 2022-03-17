@@ -15,16 +15,19 @@ namespace WorldVision.Services.Services
         private readonly IReviewTypesRepository _reviewTypesRepository;
         private readonly IUsersRepository _usersRepository;
         private readonly IReviewImagesRepository _reviewImagesRepository;
+        private readonly IReviewLikesRepository _reviewLikesRepository;
         private const int DefaultReviewsCount = 10;
         private const int DefaultCurrentPage = 1;
 
         public ReviewsService(IReviewsRepository reviewsRepository, IReviewTypesRepository reviewTypesRepository,
-            IUsersRepository usersRepository, IReviewImagesRepository reviewImagesRepository)
+            IUsersRepository usersRepository, IReviewImagesRepository reviewImagesRepository,
+            IReviewLikesRepository reviewLikesRepository)
         {
             _reviewsRepository = reviewsRepository;
             _reviewTypesRepository = reviewTypesRepository;
             _usersRepository = usersRepository;
             _reviewImagesRepository = reviewImagesRepository;
+            _reviewLikesRepository = reviewLikesRepository;
         }
 
         public async Task<int> CreateAsync(CompositeCreateReviewModel model)
@@ -140,21 +143,65 @@ namespace WorldVision.Services.Services
             return models;
         }
 
-        public async Task<CompositeReviewModel> GetReviewAsync(int reviewId, string type)
+        public async Task<ReviewModel> GetReviewAsync(int reviewId)
+        {
+            var item = await _reviewsRepository.GetAsync(reviewId); 
+            var types = await _reviewTypesRepository.GetAllAsync();
+            var userItem = await _usersRepository.GetAsync(item.UserId);
+            var fullName = $"{userItem.FName} {userItem.LName}";
+            var model = ReviewsMapper.Map(item, types, fullName);
+
+            return model;
+        }
+
+        public async Task<CompositeReviewModel> GetReviewAsync(int reviewId, string type, string currentEmail)
         {
             var types = await _reviewTypesRepository.GetAllAsync();
             var typeId = types.FirstOrDefault(x => x.ReviewType == type).ReviewTypeId;
-            var review = await _reviewsRepository.GetAsync(reviewId);
-            var userItem = await _usersRepository.GetAsync(review.UserId);
+            var reviewItem = await _reviewsRepository.GetAsync(reviewId);
+            var userItem = await _usersRepository.GetAsync(reviewItem.UserId);
             var fullName = $"{userItem.FName} {userItem.LName}";
+            var currentUser = await _usersRepository.GetByEmailAsync(currentEmail);
 
-            return new CompositeReviewModel
-            {
-                Review = ReviewsMapper.Map(review, types, fullName),
-                Images = await GetImagesAsync(reviewId),
-                LastReviewsInCategory = await GetReviewsInCategory(typeId)
-                
-            };
+            var review = ReviewsMapper.Map(reviewItem, types, fullName);
+            var images = await GetImagesAsync(reviewId);
+            var lastReviews = await GetReviewsInCategory(typeId);
+            var rating = await GetReviewRatingAsync(reviewId);
+            var currentUserLike = await GetLikeCurrentUserAsync(currentUser.UserId);
+
+            var compositeModel = ReviewsMapper.Map(review, images, lastReviews, rating, currentUserLike);
+
+            return compositeModel;   
+        }
+
+        public async Task AddLikeAsync(int reviewId, string email)
+        {
+            var user = await _usersRepository.GetByEmailAsync(email);
+            var item = ReviewsMapper.Map(reviewId, user.UserId);
+
+            await _reviewLikesRepository.CreateAsync(item);
+        }
+
+        public async Task RemoveLikeAsync(int reviewId, string email)
+        {
+            var user = await _usersRepository.GetByEmailAsync(email);
+            var item = await _reviewLikesRepository.GetByUserIdAsync(user.UserId);
+
+            await _reviewLikesRepository.RemoveAsync(item);
+        }
+
+        public async Task<int> GetReviewRatingAsync(int reviewId)
+        {
+            return await _reviewLikesRepository.GetReviewLikeCountAsync(reviewId);
+        }
+
+        public async Task<ReviewLikeModel> GetLikeCurrentUserAsync(int userId)
+        {
+            var item = await _reviewLikesRepository.GetByUserIdAsync(userId);
+
+            var model = ReviewsMapper.Map(item);
+
+            return model;
         }
     } 
 }

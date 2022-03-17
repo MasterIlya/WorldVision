@@ -36,7 +36,7 @@
                     </ul>
 
 
-                    @using (Html.BeginForm("search", "components", FormMethod.Get))
+                    @using (Html.BeginForm("search", "reviews", FormMethod.Get))
                     {
                         <div class="d-flex" style="margin-right: 10px">
                             <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="searchString">
@@ -73,6 +73,7 @@
                 </div>
             </div>
         </nav>
+
     </header>
     <div id="main">
         @RenderBody()

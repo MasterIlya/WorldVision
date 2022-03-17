@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using WorldVision.Repositories;
 using WorldVision.Repositories.Repositories;
 using WorldVision.Services.Services;
+using Elasticsearch.Net;
+using Nest;
 
 namespace WorldVision
 {
@@ -26,6 +28,7 @@ namespace WorldVision
 
             RegisterSingletons(typeof(UsersService), "Service");
             RegisterSingletons(typeof(UsersRepository), "Repository");
+            RegisterElacticSearch();
         }
 
         private void RegisterSingletons(Type anyTypeFromAssembly, string typePostfix)
@@ -46,6 +49,14 @@ namespace WorldVision
         private static Type GetDefaultInterface(Type classType)
         {
             return classType.GetInterface("I" + classType.Name);
+        }
+
+        private void RegisterElacticSearch()
+        {
+            var pool = new SingleNodeConnectionPool(new Uri("http://localhost:9200"));
+            var settings = new ConnectionSettings(pool).DefaultIndex("reviews");
+            var client = new ElasticClient(settings);
+            _container.AddSingleton(client);
         }
     }
 }

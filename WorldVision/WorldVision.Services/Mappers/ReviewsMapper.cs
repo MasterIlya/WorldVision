@@ -116,7 +116,7 @@ namespace WorldVision.Services.Mappers
                 return null;
             }
             return new ReviewImageItem
-            { 
+            {
                 ReviewId = reviewId,
                 ImageURL = model.ImageURL,
                 Size = model.ImageSize
@@ -153,6 +153,39 @@ namespace WorldVision.Services.Mappers
             item.ReviewTypeId = model.ReviewTypeId;
 
             return item;
+        }
+
+        public static ReviewLikeItem Map(int reviewId, int userId)
+        {
+            return new ReviewLikeItem
+            {
+                ReviewId = reviewId,
+                UserId = userId
+            };
+        }
+
+        public static CompositeReviewModel Map(ReviewModel review, List<ReviewImageModel> images, List<ReviewModel> lastReviews, int rating, ReviewLikeModel currentUserLike)
+        {
+            return new CompositeReviewModel
+            {
+                Review = review,
+                Images = images,
+                LastReviewsInCategory = lastReviews,
+                Rating = rating,
+                CurrentUserLike = currentUserLike
+            };
+        }
+
+        public static ReviewLikeModel Map(ReviewLikeItem item)
+        {
+            if (item == null)
+                return null;
+
+            return new ReviewLikeModel
+            {
+                ReviewId = item.ReviewId,
+                UserId = item.UserId
+            };
         }
     }
 }
