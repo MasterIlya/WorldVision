@@ -26,7 +26,7 @@ namespace WorldVision.Services.Mappers
             };
         }
 
-        public static ReviewModel Map(ReviewItem item, List<ReviewTypeItem> reviewTypes, string name, List<ReviewTagItem> tags)
+        public static ReviewModel Map(ReviewItem item, List<ReviewTypeItem> reviewTypes, string name, List<ReviewTagItem> tags, int rating)
         {
             if (item == null)
             {
@@ -44,10 +44,11 @@ namespace WorldVision.Services.Mappers
                 AuthorScore = item.AuthorScore,
                 CreateDate = item.CreateDate,
                 UpdateDate = item.UpdateDate,
+                Rating = rating,
             };
         }
 
-        public static ReviewModel Map(ReviewItem item, List<ReviewTypeItem> reviewTypes, Dictionary<int, UserItem> users)
+        public static ReviewModel Map(ReviewItem item, List<ReviewTypeItem> reviewTypes, Dictionary<int, UserItem> users, Dictionary<int, int> rating)
         {
             if (item == null)
             {
@@ -64,6 +65,28 @@ namespace WorldVision.Services.Mappers
                 AuthorScore = item.AuthorScore,
                 CreateDate = item.CreateDate,
                 UpdateDate = item.UpdateDate,
+                Rating = rating[item.ReviewId]
+            };
+        }
+
+        public static ReviewModel Map(ReviewRaitingItem item, List<ReviewTypeItem> reviewTypes, Dictionary<int, UserItem> users)
+        {
+            if (item == null)
+            {
+                return null;
+            }
+            return new ReviewModel
+            {
+                ReviewId = item.ReviewId,
+                UserId = item.UserId,
+                UserName = $"{users[item.UserId].FName} {users[item.UserId].LName}",
+                ReviewType = reviewTypes.FirstOrDefault(x => x.ReviewTypeId == item.ReviewTypeId).ReviewType,
+                Title = item.Title,
+                Content = item.Content,
+                AuthorScore = item.AuthorScore,
+                CreateDate = item.CreateDate,
+                UpdateDate = item.UpdateDate,
+                Rating = item.LikeCount
             };
         }
 
@@ -157,14 +180,13 @@ namespace WorldVision.Services.Mappers
             };
         }
 
-        public static CompositeReviewModel Map(ReviewModel review, List<ReviewImageModel> images, List<ReviewModel> lastReviews, int rating, ReviewLikeModel currentUserLike)
+        public static CompositeReviewModel Map(ReviewModel review, List<ReviewImageModel> images, List<ReviewModel> lastReviews, ReviewLikeModel currentUserLike = null)
         {
             return new CompositeReviewModel
             {
                 Review = review,
                 Images = images,
                 LastReviewsInCategory = lastReviews,
-                Rating = rating,
                 CurrentUserLike = currentUserLike
             };
         }
@@ -193,6 +215,15 @@ namespace WorldVision.Services.Mappers
             {
                 ReviewId = reviewId,
                 Tag = tag
+            };
+        }
+        public static GeneralPageModel Map (List<ReviewModel> lastReviews, List<ReviewModel> popularReviews, List<PopularTagModel> tags)
+        {
+            return new GeneralPageModel
+            {
+                LastReviews = lastReviews,
+                PopularReviews = popularReviews,
+                Tags = tags
             };
         }
     }

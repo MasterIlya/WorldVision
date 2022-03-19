@@ -1,13 +1,69 @@
-﻿@model List<PopularTagModel>
-@{ 
+﻿@model GeneralPageModel
+@{
     ViewData["Title"] = "Home";
     Layout = "_Layout";
-
+    Random rand = new Random();
 }
-<ul class="list-group list-group-flush">
-    @foreach (var tag in Model)
-    {
-        <li class="list-group-item">@tag.Tag</li>
-    }
-</ul>
+<link rel="stylesheet" href="~/css/tags.css" type="text/css" />
+<link rel="stylesheet" href="~/css/generalHead.css" type="text/css" />
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="header-h5"><h5>Last Reviews</h5></div>
+            <table class="table">
+                <tbody>
+                    @foreach (var lastReview in Model.LastReviews)
+                    {
+                        <tr>
+                            <th scope="row" style="background-color: aqua">@lastReview.CreateDate</th>
+                            <td><a class="link-light" asp-action="getreview" asp-controller="reviews" asp-route-currentEmail="@User.FindFirstValue(ClaimTypes.Email)"
+                               asp-route-type="@lastReview.ReviewType" asp-route-reviewId="@lastReview.ReviewId">@lastReview.Title</a></td>
+                            <td>@lastReview.UserName</td>
+                            <td>@lastReview.Rating</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="col">
+            <div class="header-h5"><h5>The Most Popular Reviews</h5></div>
+            <table class="table">
+                <tbody>
+                    @foreach (var popularReview in Model.PopularReviews)
+                    {
+                        <tr>
+                            <th scope="row" style="background-color: aqua">@popularReview.CreateDate</th>
+
+                            <td>
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <a class="link-light" asp-action="getreview" asp-controller="reviews" asp-route-currentEmail="@User.FindFirstValue(ClaimTypes.Email)"
+                                       asp-route-type="@popularReview.ReviewType" asp-route-reviewId="@popularReview.ReviewId">@popularReview.Title</a>
+                                }
+                                else
+                                {
+                                    <a class="link-light" asp-action="getreview" asp-controller="reviews"
+                                       asp-route-type="@popularReview.ReviewType" asp-route-reviewId="@popularReview.ReviewId">@popularReview.Title</a>
+                                }
+
+                            </td>
+                            <td>@popularReview.UserName</td>
+                            <td>@popularReview.Rating</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="col">
+            <div class="header-h5"><h5>Tags Cloud</h5></div>
+            <ul class="cloud" role="navigation" aria-label="Webdev tag cloud">
+                @foreach (var tag in Model.Tags)
+                {
+                    <li><a href="#">@tag.Tag</a></li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+
 

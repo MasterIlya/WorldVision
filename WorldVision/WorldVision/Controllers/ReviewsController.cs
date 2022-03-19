@@ -144,9 +144,18 @@ namespace WorldVision.Controllers
             return View("UserReviews", reviews);
         }
 
+        [HttpGet]
         public async Task<IActionResult> GetReview(int reviewId, string type, string currentEmail)
         {
             var model = await _reviewsService.GetReviewAsync(reviewId, type, currentEmail);
+
+            return View("Review", model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetReview(int reviewId, string type)
+        {
+            var model = await _reviewsService.GetReviewAsync(reviewId, type);
 
             return View("Review", model);
         }

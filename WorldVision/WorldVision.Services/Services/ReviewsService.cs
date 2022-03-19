@@ -18,6 +18,7 @@ namespace WorldVision.Services.Services
         private readonly IReviewLikesRepository _reviewLikesRepository;
         private readonly IReviewTagCounterRepository _reviewTagCounterRepository;
         private readonly IReviewTagsRepository _reviewTagsRepository;
+        private readonly IReviewRaitingRepository _reviewLikeCounterRepository;
         private const int DefaultReviewsCount = 10;
         private const int DefaultTagsCount = 20;
         private const int DefaultCurrentPage = 1;
@@ -25,7 +26,7 @@ namespace WorldVision.Services.Services
         public ReviewsService(IReviewsRepository reviewsRepository, IReviewTypesRepository reviewTypesRepository,
             IUsersRepository usersRepository, IReviewImagesRepository reviewImagesRepository,
             IReviewLikesRepository reviewLikesRepository, IReviewTagCounterRepository reviewTagCounterRepository,
-            IReviewTagsRepository reviewTagsRepository)
+            IReviewTagsRepository reviewTagsRepository, IReviewRaitingRepository reviewLikeCounterRepository)
         {
             _reviewsRepository = reviewsRepository;
             _reviewTypesRepository = reviewTypesRepository;
@@ -34,6 +35,7 @@ namespace WorldVision.Services.Services
             _reviewLikesRepository = reviewLikesRepository;
             _reviewTagCounterRepository = reviewTagCounterRepository;
             _reviewTagsRepository = reviewTagsRepository;
+            _reviewLikeCounterRepository = reviewLikeCounterRepository;
         }
 
         public async Task<int> CreateAsync(CompositeCreateReviewModel model)
@@ -103,14 +105,17 @@ namespace WorldVision.Services.Services
 
             var items = await _reviewsRepository.GetAsync(skip, take, user.UserId);
             var typeItems = await _reviewTypesRepository.GetAllAsync();
-            Dictionary<int, List<Repositories.Items.ReviewTagItem>> tags = new Dictionary<int, List<Repositories.Items.ReviewTagItem>>(); 
+            Dictionary<int, List<Repositories.Items.ReviewTagItem>> tags = new Dictionary<int, List<Repositories.Items.ReviewTagItem>>();
+            Dictionary<int, int> ratings = new Dictionary<int, int>();
             foreach(var item in items)
             {
                 var itemTags = await _reviewTagsRepository.GetReviewTagsAsync(item.ReviewId);
+                var rating = await _reviewLikesRepository.GetReviewLikeCountAsync(item.ReviewId);
                 tags.Add(item.ReviewId, itemTags);
+                ratings.Add(item.ReviewId, rating);
             }
 
-            var modelsList = items.Select(x => ReviewsMapper.Map(x, typeItems, fullName, tags[x.ReviewId])).ToList();
+            var modelsList = items.Select(x => ReviewsMapper.Map(x, typeItems, fullName, tags[x.ReviewId], ratings[x.ReviewId])).ToList();
 
             var elementsCount = await _reviewsRepository.GetCountAsync(user.UserId);
 
@@ -161,13 +166,14 @@ namespace WorldVision.Services.Services
 
             var typeItems = await _reviewTypesRepository.GetAllAsync();
 
-            var ids = items.Select(x => x.UserId).Distinct().ToList();
-
-            var users = await _usersRepository.GetUsersAsync(ids);
-
+            var userIds = items.Select(x => x.UserId).Distinct().ToList();
+            var users = await _usersRepository.GetUsersAsync(userIds);
             var usersToDict = users.ToDictionary(x => x.UserId);
 
-            var models = items.Select(x => ReviewsMapper.Map(x, typeItems, usersToDict)).ToList();
+            var reviewIds = items.Select(x => x.ReviewId).ToList();
+            var likes = await _reviewLikesRepository.GetReviewsLikeCountAsync(reviewIds);
+
+            var models = items.Select(x => ReviewsMapper.Map(x, typeItems, usersToDict, likes)).ToList();
 
             return models;
         }
@@ -177,11 +183,31 @@ namespace WorldVision.Services.Services
             var item = await _reviewsRepository.GetAsync(reviewId);
             var types = await _reviewTypesRepository.GetAllAsync();
             var tags = await _reviewTagsRepository.GetReviewTagsAsync(reviewId);
+            var rating = await _reviewLikesRepository.GetReviewLikeCountAsync(reviewId);
             var userItem = await _usersRepository.GetAsync(item.UserId);
             var fullName = $"{userItem.FName} {userItem.LName}";
-            var model = ReviewsMapper.Map(item, types, fullName, tags);
+            var model = ReviewsMapper.Map(item, types, fullName, tags, rating);
 
             return model;
+        }
+
+        public async Task<CompositeReviewModel> GetReviewAsync(int reviewId, string type)
+        {
+            var types = await _reviewTypesRepository.GetAllAsync();
+            var typeId = types.FirstOrDefault(x => x.ReviewType == type).ReviewTypeId;
+            var reviewItem = await _reviewsRepository.GetAsync(reviewId);
+            var tags = await _reviewTagsRepository.GetReviewTagsAsync(reviewId);
+            var userItem = await _usersRepository.GetAsync(reviewItem.UserId);
+            var fullName = $"{userItem.FName} {userItem.LName}";
+
+            var rating = await GetReviewRatingAsync(reviewId);
+            var review = ReviewsMapper.Map(reviewItem, types, fullName, tags, rating);
+            var images = await GetImagesAsync(reviewId);
+            var lastReviews = await GetReviewsInCategory(typeId);
+
+            var compositeModel = ReviewsMapper.Map(review, images, lastReviews);
+
+            return compositeModel;
         }
 
         public async Task<CompositeReviewModel> GetReviewAsync(int reviewId, string type, string currentEmail)
@@ -194,13 +220,13 @@ namespace WorldVision.Services.Services
             var fullName = $"{userItem.FName} {userItem.LName}";
             var currentUser = await _usersRepository.GetByEmailAsync(currentEmail);
 
-            var review = ReviewsMapper.Map(reviewItem, types, fullName, tags);
+            var rating = await GetReviewRatingAsync(reviewId);
+            var review = ReviewsMapper.Map(reviewItem, types, fullName, tags, rating);
             var images = await GetImagesAsync(reviewId);
             var lastReviews = await GetReviewsInCategory(typeId);
-            var rating = await GetReviewRatingAsync(reviewId);
             var currentUserLike = await GetLikeCurrentUserAsync(currentUser.UserId);
 
-            var compositeModel = ReviewsMapper.Map(review, images, lastReviews, rating, currentUserLike);
+            var compositeModel = ReviewsMapper.Map(review, images, lastReviews, currentUserLike);
 
             return compositeModel;
         }
@@ -239,6 +265,31 @@ namespace WorldVision.Services.Services
             var items = await _reviewTagCounterRepository.GetPopularTagsAsync(DefaultTagsCount);
             var models = items.Select(x => ReviewsMapper.Map(x)).ToList();
             return models;
+        }
+
+        public async Task<GeneralPageModel> GetGeneralPageModelAsync()
+        {
+            var tagItems = await _reviewTagCounterRepository.GetPopularTagsAsync(DefaultTagsCount);
+            var tags = tagItems.Select(x => ReviewsMapper.Map(x)).ToList();
+
+            var reviewTypes = await _reviewTypesRepository.GetAllAsync();
+            var skip = 0;
+            var take = DefaultReviewsCount;
+            
+            var lastReviewItems = await _reviewsRepository.GetAsync(skip, take);
+            var userIds = lastReviewItems.Select(x => x.UserId).Distinct().ToList();
+            var reviewsIds = lastReviewItems.Select(x => x.ReviewId).ToList();
+            var users = await _usersRepository.GetUsersAsync(userIds);
+            var usersToDict = users.ToDictionary(x => x.UserId);
+            var likes = await _reviewLikesRepository.GetReviewsLikeCountAsync(reviewsIds);
+            var lastReviews = lastReviewItems.Select(x => ReviewsMapper.Map(x, reviewTypes, usersToDict, likes)).ToList();
+
+            var popularItems = await _reviewLikeCounterRepository.GetPopularReviewsAsync(take);
+            var popularReviews = popularItems.Select(x => ReviewsMapper.Map(x, reviewTypes, usersToDict)).ToList();
+
+            var model = ReviewsMapper.Map(lastReviews, popularReviews, tags);
+
+            return model;
         }
     }
 }

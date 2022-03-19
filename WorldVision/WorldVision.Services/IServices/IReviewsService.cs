@@ -16,6 +16,7 @@ namespace WorldVision.Services.IServices
         public Task<List<ReviewImageModel>> GetImagesAsync(int reviewId);
         public Task RemoveImageAsync(int imageId);
         public Task<CompositeReviewModel> GetReviewAsync(int reviewId, string type, string currentEmail);
+        public Task<CompositeReviewModel> GetReviewAsync(int reviewId, string type);
         public Task<List<PopularTagModel>> GetPopularTagsAsync();
 
     }

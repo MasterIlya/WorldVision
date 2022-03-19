@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WorldVision.Repositories.Items;
-using System.Linq;
 
 namespace WorldVision.Repositories
 {
@@ -15,6 +14,7 @@ namespace WorldVision.Repositories
         public DbSet<ReviewLikeItem> ReviewLikeItems { get; set; }
         public DbSet<ReviewTagItem> ReviewTagItems { get; set; }
         public DbSet<ReviewTagCounterItem> ReviewTagCounterItems { get; set; }
+        public DbSet<ReviewRaitingItem> ReviewRaitingItems { get; set; }
 
 
         public RepositoryContext(string conectionString)
@@ -23,7 +23,6 @@ namespace WorldVision.Repositories
 
             Database.EnsureCreated();
         }
-
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

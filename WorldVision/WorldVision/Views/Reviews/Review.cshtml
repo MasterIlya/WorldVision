@@ -84,8 +84,16 @@
                         {
                             <tr>
                                 <td>
-                                    <a class="btn btn-outline text-black" asp-action="getreview" asp-controller="reviews"
-                                       asp-route-type="@review.ReviewType" asp-route-reviewId="@review.ReviewId" asp-route-currentEmail="@User.FindFirstValue(ClaimTypes.Email)">@review.Title</a>
+                                    @if (User.Identity.IsAuthenticated)
+                                    {
+                                        <a class="btn btn-outline text-black" asp-action="getreview" asp-controller="reviews"
+                                           asp-route-type="@review.ReviewType" asp-route-reviewId="@review.ReviewId" asp-route-currentEmail="@User.FindFirstValue(ClaimTypes.Email)">@review.Title</a>
+                                    }
+                                    else
+                                    {
+                                        <a class="btn btn-outline text-black" asp-action="getreview" asp-controller="reviews"
+                                            asp-route-type="@review.ReviewType" asp-route-reviewId="@review.ReviewId">@review.Title</a>
+                                    }
                                     <p class="text-black-50">
                                         @review.UpdateDate.ToShortDateString()     @review.UserName
                                     </p>
