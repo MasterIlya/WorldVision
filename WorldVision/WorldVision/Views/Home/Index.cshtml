@@ -1,13 +1,50 @@
-﻿@model List<PopularTagModel>
-@{ 
+﻿@{ 
     ViewData["Title"] = "Home";
     Layout = "_Layout";
 
 }
-<ul class="list-group list-group-flush">
-    @foreach (var tag in Model)
-    {
-        <li class="list-group-item">@tag.Tag</li>
-    }
-</ul>
 
+<div id="carouselExampleDark" class="carousel carousel-dark slide" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    </div>
+    <div class="carousel-inner">
+        <div class="carousel-item active" data-bs-interval="10000">
+            <a href="https://www.intel.ru/content/www/ru/ru/products/docs/processors/core/12th-gen-processors.html">
+                <img style="width: 1920px; height: 700px" src="https://res.cloudinary.com/dtomjloda/image/upload/v1638192657/img/icore_9_dbpsvr.jpg" class="d-block w-100" alt="...">
+            </a>
+            <div class="carousel-caption d-none d-md-block">
+                <h5 style="color: aliceblue">Intel® Core™ 9</h5>
+                <p style="color: aliceblue">Лучший среди процессоров Intel® Core™ 12-го.</p>
+            </div>
+        </div>
+        <div class="carousel-item" data-bs-interval="2000">
+            <a href="https://rog.asus.com/ru/motherboards/rog-maximus/rog-maximus-z690-extreme-glacial-model/">
+                <img style="width: 1920px; height: 700px" src="https://res.cloudinary.com/dtomjloda/image/upload/v1638191729/img/ASUS_ROG_Maximus_Z690_Extreme_Glacial_kyoelo.jpg" class="d-block w-100" alt="...">
+            </a>
+            <div class="carousel-caption d-none d-md-block">
+                <h5 style="color: aliceblue">ROG MAXIMUS Z690 EXTREME GLACIAL</h5>
+                <p style="color: aliceblue">Максимальная производительность в сочетании с безупречной стабильностью - ASUS ROG MAXIMUS Z690 EXTREME.</p>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <a href="https://www.nvidia.com/ru-ru/geforce/graphics-cards/30-series/rtx-3090/">
+                <img style="width: 1920px; height: 700px" src="https://res.cloudinary.com/dtomjloda/image/upload/v1638192367/img/3090_el3nfg.jpg" class="d-block w-100" alt="...">
+            </a>
+            <div class="carousel-caption d-none d-md-block">
+                <h5 style="color: aliceblue">GEFORCE RTX 3090</h5>
+                <p style="color: aliceblue">Невероятно мощная видеокарта с производительностью класса TITAN.</p>
+            </div>
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>

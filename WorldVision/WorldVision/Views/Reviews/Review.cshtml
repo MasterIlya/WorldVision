@@ -2,8 +2,9 @@
 @{
 
     Layout = "_Layout";
+    var btn = "like";
 }
-<link href="~/css/Carousel.css" rel="stylesheet">
+ 
 <style>
     .carousel {
         width: 800px;
@@ -21,8 +22,12 @@
         left: 0;
         min-height: 400px;
     }
+    .specH1, .specBtn {
+        float: left;
+    } 
 </style>
 <body>
+    <input id="email" value="@User.FindFirstValue(ClaimTypes.Email)" hidden/>
     <div class="container">
         <div class="row">
             <div class="col-8">
@@ -55,9 +60,27 @@
                         </button>
                     </div>
                 </div>
-                <div class="row" style="margin-top: 20px">
-                    <h1 class="text-capitalize text-decoration-underline">@Model.Review.Title</h1>
-                    <p class="text-black-50">@Model.Review.UpdateDate.ToShortDateString()      @Model.Review.UserName     Score: @Model.Review.AuthorScore</p>
+                <div class="row" style="margin-top: 20px;">
+                    <div>
+                        <h1 class="text-capitalize text-decoration-underline specH1">@Model.Review.Title</h1>
+                        
+                        @if (Model.CurrentUserLike == null)
+                        {
+                            
+                            <button id="fbtn" class="btn btn-sm specBtn" style="margin-right:auto; width: 45px; height: 39px;" value="@Model.Review.ReviewId" onclick="like(this.value)">
+                                <img id="like" src="https://res.cloudinary.com/dtomjloda/image/upload/v1646918477/like_kiw3rf.png" />
+                            </button>
+                        }
+                        else
+                        {
+                            btn = "dislike";
+                            <button id="sbtn" class="btn btn-sm specBtn" style="margin-right:auto; width: 45px; height: 39px;" value="@Model.Review.ReviewId" onclick="like(this.value)">
+                                <img id="like" src="https://res.cloudinary.com/dtomjloda/image/upload/v1646919016/like_kyrkdt.png" />
+                            </button>
+                        }
+
+                    </div>
+                    <p class="text-black-50">@Model.Review.UpdateDate.ToShortDateString()      @Model.Review.UserName     Score: @Model.Review.AuthorScore Rating: @Model.Rating</p>
                 </div>
                 <div class="row">
                     <p class="text-secondary">
@@ -84,8 +107,8 @@
                         {
                             <tr>
                                 <td>
-                                    <a class="btn btn-outline text-black" asp-action="getreview" asp-controller="reviews"
-                                       asp-route-type="@review.ReviewType" asp-route-reviewId="@review.ReviewId" asp-route-currentEmail="@User.FindFirstValue(ClaimTypes.Email)">@review.Title</a>
+                                    <a class="btn btn-outline text-black" asp-action="getreview" asp-controller="reviews" asp-route-email="@User.FindFirstValue(ClaimTypes.Email)"
+                                       asp-route-type="@review.ReviewType" asp-route-reviewId="@review.ReviewId">@review.Title</a>
                                     <p class="text-black-50">
                                         @review.UpdateDate.ToShortDateString()     @review.UserName
                                     </p>
@@ -97,4 +120,8 @@
             </div>
         </div>
     </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script>const btn = @Json.Serialize(btn);</script>
+    <script src="~/js/like.js"></script>
 </body>
+

@@ -36,10 +36,6 @@ namespace WorldVision.Repositories
             DbSet().Update(item);
             await _repositoryContext.SaveChangesAsync();
         }
-        public IQueryable<T> ExecuteProcedure(string sqlCode, object parameters = null)
-        {
-            return DbSet().FromSqlRaw(sqlCode, parameters);
-        }
 
         protected IQueryable<T> GetItems()
         {
@@ -50,5 +46,6 @@ namespace WorldVision.Repositories
         {
             return _repositoryContext.Set<T>();
         }
+
     }
 }
