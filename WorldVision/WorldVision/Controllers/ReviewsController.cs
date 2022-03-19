@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using WorldVision.Services.IServices;
@@ -12,15 +16,13 @@ namespace WorldVision.Controllers
         private readonly IReviewsService _reviewsService;
         private readonly IUsersService _usersService;
         private readonly ICloudinaryService _cloudinaryService;
-        private readonly IElasticSearchService _elasticSearchService;
 
-        public ReviewsController(IReviewsService reviewsService, IUsersService usersService,
-            ICloudinaryService cloudinaryService, IElasticSearchService elasticSearchService)
+
+        public ReviewsController(IReviewsService reviewsService, IUsersService usersService, ICloudinaryService cloudinaryService)
         {
             _reviewsService = reviewsService;
             _usersService = usersService;
             _cloudinaryService = cloudinaryService;
-            _elasticSearchService = elasticSearchService;
         }
 
         [HttpGet]
@@ -71,8 +73,6 @@ namespace WorldVision.Controllers
 
                 var reviewId = await _reviewsService.CreateAsync(model);
 
-                await _elasticSearchService.GetReviewIndexAsync(await _reviewsService.GetReviewAsync(reviewId));
-
                 var models = _cloudinaryService.GetFromCache(pageId, email);
 
                 await _reviewsService.CreateReviewImagesAsync(models, reviewId);
@@ -109,13 +109,11 @@ namespace WorldVision.Controllers
 
                 model.ReviewModel.UserId = user.UserId;
 
-                await _elasticSearchService.GetReviewIndexAsync(await _reviewsService.GetReviewAsync(model.ReviewModel.ReviewId));
-
                 await _reviewsService.UpdateAsync(model);
 
                 var models = _cloudinaryService.GetFromCache(pageId, email);
 
-                if (models != null)
+                if(models != null)
                 {
                     await _reviewsService.CreateReviewImagesAsync(models, model.ReviewModel.ReviewId);
                 }
@@ -135,7 +133,7 @@ namespace WorldVision.Controllers
         public async Task<IActionResult> RemoveReview(int reviewId, string email)
         {
             await _reviewsService.RemoveAsync(reviewId);
-            await _elasticSearchService.DeleteReviewAsync(reviewId);
+
             return RedirectToAction("GetUserReviews", new { email });
         }
 
@@ -146,31 +144,11 @@ namespace WorldVision.Controllers
             return View("UserReviews", reviews);
         }
 
-        public async Task<IActionResult> GetReview(int reviewId, string type, string email)
+        public async Task<IActionResult> GetReview(int reviewId, string type, string currentEmail)
         {
-            var model = await _reviewsService.GetReviewAsync(reviewId, type, email);
+            var model = await _reviewsService.GetReviewAsync(reviewId, type, currentEmail);
 
             return View("Review", model);
-        }
-
-        [HttpPost]
-        public async Task AddLike(int reviewId, string email)
-        {
-            await _reviewsService.AddLikeAsync(reviewId, email);
-        }
-
-        [HttpPost]
-        public async Task RemoveLike(int reviewId, string email)
-        {
-            await _reviewsService.RemoveLikeAsync(reviewId, email);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Search(string search, int currentPage)
-        {
-            var models = await _elasticSearchService.SearchReviewsAsync(search, currentPage);
-
-            return View("Reviews", models);
         }
     }
 }
