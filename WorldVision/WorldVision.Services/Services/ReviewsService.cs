@@ -16,53 +16,32 @@ namespace WorldVision.Services.Services
         private readonly IUsersRepository _usersRepository;
         private readonly IReviewImagesRepository _reviewImagesRepository;
         private readonly IReviewLikesRepository _reviewLikesRepository;
-        private readonly IReviewTagCounterRepository _reviewTagCounterRepository;
-        private readonly IReviewTagsRepository _reviewTagsRepository;
         private const int DefaultReviewsCount = 10;
-        private const int DefaultTagsCount = 20;
         private const int DefaultCurrentPage = 1;
 
         public ReviewsService(IReviewsRepository reviewsRepository, IReviewTypesRepository reviewTypesRepository,
             IUsersRepository usersRepository, IReviewImagesRepository reviewImagesRepository,
-            IReviewLikesRepository reviewLikesRepository, IReviewTagCounterRepository reviewTagCounterRepository,
-            IReviewTagsRepository reviewTagsRepository)
+            IReviewLikesRepository reviewLikesRepository)
         {
             _reviewsRepository = reviewsRepository;
             _reviewTypesRepository = reviewTypesRepository;
             _usersRepository = usersRepository;
             _reviewImagesRepository = reviewImagesRepository;
             _reviewLikesRepository = reviewLikesRepository;
-            _reviewTagCounterRepository = reviewTagCounterRepository;
-            _reviewTagsRepository = reviewTagsRepository;
         }
 
         public async Task<int> CreateAsync(CompositeCreateReviewModel model)
         {
             var item = ReviewsMapper.Map(model.ReviewModel);
+
             await _reviewsRepository.CreateAsync(item);
-            var tags = model.ReviewModel.Tags.Split(", ");
-            foreach (var tag in tags)
-            {
-                var tagItem = ReviewsMapper.Map(tag, item.ReviewId);
-                await _reviewTagsRepository.CreateAsync(tagItem);
-            }
             return item.ReviewId;
         }
 
         public async Task UpdateAsync(CompositeCreateReviewModel model)
         {
             var item = await _reviewsRepository.GetAsync(model.ReviewModel.ReviewId);
-            var tags = await _reviewTagsRepository.GetReviewTagsAsync(model.ReviewModel.ReviewId);
-            foreach(var tag in tags)
-            {
-                await _reviewTagsRepository.RemoveAsync(tag);
-            }
-            var newTags = model.ReviewModel.Tags.Split(", ");
-            foreach (var tag in newTags)
-            {
-                var tagItem = ReviewsMapper.Map(tag, item.ReviewId);
-                await _reviewTagsRepository.CreateAsync(tagItem);
-            }
+
             var newItem = ReviewsMapper.UpdateMap(item, model.ReviewModel);
 
             await _reviewsRepository.UpdateAsync(newItem);
@@ -71,12 +50,10 @@ namespace WorldVision.Services.Services
         public async Task RemoveAsync(int reviewId)
         {
             var item = await _reviewsRepository.GetAsync(reviewId);
-            var tags = await _reviewTagsRepository.GetReviewTagsAsync(reviewId);
-            foreach (var tag in tags)
-            {
-                await _reviewTagsRepository.RemoveAsync(tag);
-            }
-            await _reviewsRepository.RemoveAsync(item);
+
+            item.Delisted = true;
+
+            await _reviewsRepository.UpdateAsync(item);
         }
 
         public async Task<CreateReviewModel> GetReviewAsyncForUpdate(int reviewId)
@@ -103,14 +80,8 @@ namespace WorldVision.Services.Services
 
             var items = await _reviewsRepository.GetAsync(skip, take, user.UserId);
             var typeItems = await _reviewTypesRepository.GetAllAsync();
-            Dictionary<int, List<Repositories.Items.ReviewTagItem>> tags = new Dictionary<int, List<Repositories.Items.ReviewTagItem>>(); 
-            foreach(var item in items)
-            {
-                var itemTags = await _reviewTagsRepository.GetReviewTagsAsync(item.ReviewId);
-                tags.Add(item.ReviewId, itemTags);
-            }
 
-            var modelsList = items.Select(x => ReviewsMapper.Map(x, typeItems, fullName, tags[x.ReviewId])).ToList();
+            var modelsList = items.Select(x => ReviewsMapper.Map(x, typeItems, fullName)).ToList();
 
             var elementsCount = await _reviewsRepository.GetCountAsync(user.UserId);
 
@@ -174,12 +145,11 @@ namespace WorldVision.Services.Services
 
         public async Task<ReviewModel> GetReviewAsync(int reviewId)
         {
-            var item = await _reviewsRepository.GetAsync(reviewId);
+            var item = await _reviewsRepository.GetAsync(reviewId); 
             var types = await _reviewTypesRepository.GetAllAsync();
-            var tags = await _reviewTagsRepository.GetReviewTagsAsync(reviewId);
             var userItem = await _usersRepository.GetAsync(item.UserId);
             var fullName = $"{userItem.FName} {userItem.LName}";
-            var model = ReviewsMapper.Map(item, types, fullName, tags);
+            var model = ReviewsMapper.Map(item, types, fullName);
 
             return model;
         }
@@ -189,12 +159,11 @@ namespace WorldVision.Services.Services
             var types = await _reviewTypesRepository.GetAllAsync();
             var typeId = types.FirstOrDefault(x => x.ReviewType == type).ReviewTypeId;
             var reviewItem = await _reviewsRepository.GetAsync(reviewId);
-            var tags = await _reviewTagsRepository.GetReviewTagsAsync(reviewId);
             var userItem = await _usersRepository.GetAsync(reviewItem.UserId);
             var fullName = $"{userItem.FName} {userItem.LName}";
             var currentUser = await _usersRepository.GetByEmailAsync(currentEmail);
 
-            var review = ReviewsMapper.Map(reviewItem, types, fullName, tags);
+            var review = ReviewsMapper.Map(reviewItem, types, fullName);
             var images = await GetImagesAsync(reviewId);
             var lastReviews = await GetReviewsInCategory(typeId);
             var rating = await GetReviewRatingAsync(reviewId);
@@ -202,7 +171,7 @@ namespace WorldVision.Services.Services
 
             var compositeModel = ReviewsMapper.Map(review, images, lastReviews, rating, currentUserLike);
 
-            return compositeModel;
+            return compositeModel;   
         }
 
         public async Task AddLikeAsync(int reviewId, string email)
@@ -234,11 +203,5 @@ namespace WorldVision.Services.Services
 
             return model;
         }
-        public async Task<List<PopularTagModel>> GetPopularTagsAsync()
-        {
-            var items = await _reviewTagCounterRepository.GetPopularTagsAsync(DefaultTagsCount);
-            var models = items.Select(x => ReviewsMapper.Map(x)).ToList();
-            return models;
-        }
-    }
+    } 
 }

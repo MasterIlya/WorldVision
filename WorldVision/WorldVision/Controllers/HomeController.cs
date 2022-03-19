@@ -1,20 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using WorldVision.Services.IServices;
 
 namespace WorldVision.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IReviewsService _reviewsService;
-        public HomeController(IReviewsService reviewsService)
+        public IActionResult Index()
         {
-            _reviewsService = reviewsService;
-        }
-        public async Task<IActionResult> Index()
-        {
-            var models =  await _reviewsService.GetPopularTagsAsync();
-            return View(models);
+            return View();
         }
     }
 }

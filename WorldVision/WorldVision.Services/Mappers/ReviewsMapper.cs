@@ -18,15 +18,17 @@ namespace WorldVision.Services.Mappers
             {
                 UserId = model.UserId,
                 ReviewTypeId = model.ReviewTypeId,
+                Tags = model.Tags,
                 Title = model.Title,
                 Content = model.Content,
                 AuthorScore = model.AuthorScore,
                 CreateDate = DateTime.UtcNow,
                 UpdateDate = DateTime.UtcNow,
+                Delisted = false
             };
         }
 
-        public static ReviewModel Map(ReviewItem item, List<ReviewTypeItem> reviewTypes, string name, List<ReviewTagItem> tags)
+        public static ReviewModel Map(ReviewItem item, List<ReviewTypeItem> reviewTypes, string name)
         {
             if (item == null)
             {
@@ -38,12 +40,13 @@ namespace WorldVision.Services.Mappers
                 UserId = item.UserId,
                 UserName = name,
                 ReviewType = reviewTypes.FirstOrDefault(x => x.ReviewTypeId == item.ReviewTypeId).ReviewType,
-                Tags = string.Join(", ", tags.Select(x => x.Tag).ToArray()),
+                Tags = item.Tags,
                 Title = item.Title,
                 Content = item.Content,
                 AuthorScore = item.AuthorScore,
                 CreateDate = item.CreateDate,
                 UpdateDate = item.UpdateDate,
+                Delisted = item.Delisted
             };
         }
 
@@ -59,11 +62,13 @@ namespace WorldVision.Services.Mappers
                 UserId = item.UserId,
                 UserName = $"{users[item.UserId].FName} {users[item.UserId].LName}",
                 ReviewType = reviewTypes.FirstOrDefault(x => x.ReviewTypeId == item.ReviewTypeId).ReviewType,
+                Tags = item.Tags,
                 Title = item.Title,
                 Content = item.Content,
                 AuthorScore = item.AuthorScore,
                 CreateDate = item.CreateDate,
                 UpdateDate = item.UpdateDate,
+                Delisted = item.Delisted
             };
         }
 
@@ -97,6 +102,7 @@ namespace WorldVision.Services.Mappers
                 ReviewId = item.ReviewId,
                 UserId = item.UserId,
                 ReviewTypeId = item.ReviewTypeId,
+                Tags = item.Tags,
                 Title = item.Title,
                 Content = item.Content,
                 AuthorScore = item.AuthorScore
@@ -141,6 +147,7 @@ namespace WorldVision.Services.Mappers
 
             item.AuthorScore = model.AuthorScore;
             item.Content = model.Content;
+            item.Tags = model.Tags;
             item.Title = model.Title;
             item.UpdateDate = DateTime.UtcNow;
             item.ReviewTypeId = model.ReviewTypeId;
@@ -178,21 +185,6 @@ namespace WorldVision.Services.Mappers
             {
                 ReviewId = item.ReviewId,
                 UserId = item.UserId
-            };
-        }
-        public static PopularTagModel Map(ReviewTagCounterItem item)
-        {
-            return new PopularTagModel
-            { 
-                Tag = item.Tag
-            };
-        }
-        public static ReviewTagItem Map(string tag, int reviewId)
-        {
-            return new ReviewTagItem
-            {
-                ReviewId = reviewId,
-                Tag = tag
             };
         }
     }
