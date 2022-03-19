@@ -63,5 +63,7 @@
     <Build Include="ReviewTypes.sql" />
     <Build Include="ReviewImages.sql" />
     <Build Include="ReviewLikes.sql" />
+    <Build Include="ReviewTags.sql" />
+    <Build Include="TakePopularTags.sql" />
   </ItemGroup>
 </Project>
