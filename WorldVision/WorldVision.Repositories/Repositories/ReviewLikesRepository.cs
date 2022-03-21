@@ -27,5 +27,17 @@ namespace WorldVision.Repositories.Repositories
         {
             return await GetItems().FirstOrDefaultAsync(x => x.UserId == userId);
         }
+
+        public async Task<Dictionary<int, int>> GetReviewsLikeCountAsync(List<int> reviewIds)
+        {
+            var likes = new Dictionary<int, int>();
+            foreach(var id in reviewIds)
+            {
+                var reviewLikes = await GetItems().Where(x => x.ReviewId == id).CountAsync();
+                likes.Add(id, reviewLikes);
+            }
+
+            return likes;
+        }
     }
 }

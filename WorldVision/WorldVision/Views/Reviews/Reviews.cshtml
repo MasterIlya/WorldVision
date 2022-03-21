@@ -23,8 +23,17 @@
                     <tr>
                         <th scope="row">@((Model.CurrentPage - 1) * 10 + 1 + i)</th>
                         <td>
-                            <a class="link-light" asp-action="getreview" asp-controller="reviews" asp-route-type="@Model.Models[i].ReviewType"
-                               asp-route-email="@User.FindFirstValue(ClaimTypes.Email)" asp-route-reviewId="@Model.Models[i].ReviewId">@Model.Models[i].Title</a>
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <a class="" asp-action="getreview" asp-controller="reviews" asp-route-currentEmail="@User.FindFirstValue(ClaimTypes.Email)"
+                                   asp-route-type="@Model.Models[i].ReviewType" asp-route-reviewId="@Model.Models[i].ReviewId">@Model.Models[i].Title</a>
+                            }
+                            else
+                            {
+                                <a class="" asp-action="getreviewnoauth" asp-controller="reviews"
+                                   asp-route-type="@Model.Models[i].ReviewType" asp-route-reviewId="@Model.Models[i].ReviewId">@Model.Models[i].Title</a>
+                            }
+
                         </td>
                         <td>@Model.Models[i].ReviewType</td>
                         <td>@Model.Models[i].AuthorScore</td>

@@ -16,6 +16,6 @@ namespace WorldVision.Services.Models
         public byte AuthorScore { get; set; }
         public DateTime CreateDate { get; set; }
         public DateTime UpdateDate { get; set; }
-        public bool Delisted { get; set; }
+        public int Rating { get; set; }
     }
 }

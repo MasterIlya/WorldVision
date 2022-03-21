@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using WorldVision.Repositories.Items;
 
 namespace WorldVision.Repositories.Interfaces
@@ -10,5 +11,6 @@ namespace WorldVision.Repositories.Interfaces
         public Task RemoveAsync(ReviewLikeItem item);
         public Task<int> GetReviewLikeCountAsync(int reviewId);
         public Task<ReviewLikeItem> GetByUserIdAsync(int userId);
+        public Task<Dictionary<int, int>> GetReviewsLikeCountAsync(List<int> reviewIds);
     }
 }
