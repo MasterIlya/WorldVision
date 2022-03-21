@@ -6,20 +6,38 @@
 }
 <link rel="stylesheet" href="~/css/tags.css" type="text/css" />
 <link rel="stylesheet" href="~/css/generalHead.css" type="text/css" />
+<style>
+    td {
+        background-color: aqua
+    }
+</style>
 <div class="container">
     <div class="row">
         <div class="col">
             <div class="header-h5"><h5>Last Reviews</h5></div>
-            <table class="table">
+            <table class="table table-bordered border-light">
                 <tbody>
                     @foreach (var lastReview in Model.LastReviews)
                     {
-                        <tr>
-                            <th scope="row" style="background-color: aqua">@lastReview.CreateDate</th>
-                            <td><a class="link-light" asp-action="getreview" asp-controller="reviews" asp-route-currentEmail="@User.FindFirstValue(ClaimTypes.Email)"
-                               asp-route-type="@lastReview.ReviewType" asp-route-reviewId="@lastReview.ReviewId">@lastReview.Title</a></td>
+                        <tr style="background-color: rgb(232, 236, 255)">
+                            <th scope="row" >@lastReview.CreateDate.ToShortDateString()</th>
+                            <td>
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <a class="link-dark" asp-action="getreview" asp-controller="reviews"
+                                       asp-route-type="@lastReview.ReviewType" asp-route-reviewId="@lastReview.ReviewId">@lastReview.Title</a>
+                                }
+                                else
+                                {
+                                    <a class="link-dark" asp-action="getreviewnoauth" asp-controller="reviews"
+                                       asp-route-type="@lastReview.ReviewType" asp-route-reviewId="@lastReview.ReviewId">@lastReview.Title</a>
+                                }
+                            </td>
                             <td>@lastReview.UserName</td>
-                            <td>@lastReview.Rating</td>
+                            <td style="text-align: center">
+                                <h6>Rating</h6>
+                                <p>@lastReview.Rating</p>
+                            </td>
                         </tr>
                     }
                 </tbody>
@@ -27,28 +45,30 @@
         </div>
         <div class="col">
             <div class="header-h5"><h5>The Most Popular Reviews</h5></div>
-            <table class="table">
+            <table class="table table-bordered border-light">
                 <tbody>
                     @foreach (var popularReview in Model.PopularReviews)
                     {
-                        <tr>
-                            <th scope="row" style="background-color: aqua">@popularReview.CreateDate</th>
+                        <tr style="background-color: rgb(232, 236, 255); ">
+                            <th scope="row">@popularReview.CreateDate.ToShortDateString()</th>
 
                             <td>
                                 @if (User.Identity.IsAuthenticated)
                                 {
-                                    <a class="link-light" asp-action="getreview" asp-controller="reviews" asp-route-currentEmail="@User.FindFirstValue(ClaimTypes.Email)"
+                                    <a class="link-dark" asp-action="getreview" asp-controller="reviews" asp-route-currentEmail="@User.FindFirstValue(ClaimTypes.Email)"
                                        asp-route-type="@popularReview.ReviewType" asp-route-reviewId="@popularReview.ReviewId">@popularReview.Title</a>
                                 }
                                 else
                                 {
-                                    <a class="link-light" asp-action="getreview" asp-controller="reviews"
+                                    <a class="link-dark" asp-action="getreviewnoauth" asp-controller="reviews"
                                        asp-route-type="@popularReview.ReviewType" asp-route-reviewId="@popularReview.ReviewId">@popularReview.Title</a>
                                 }
-
                             </td>
                             <td>@popularReview.UserName</td>
-                            <td>@popularReview.Rating</td>
+                            <td style="text-align: center">
+                                <h6>Rating</h6>
+                                <p>@popularReview.Rating</p>
+                            </td>
                         </tr>
                     }
                 </tbody>

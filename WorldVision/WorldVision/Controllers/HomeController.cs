@@ -13,7 +13,7 @@ namespace WorldVision.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            var models =  await _reviewsService.GetPopularTagsAsync();
+            var models =  await _reviewsService.GetGeneralPageModelAsync();
             return View(models);
         }
     }

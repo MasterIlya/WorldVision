@@ -9,10 +9,7 @@ namespace WorldVision.Services.IServices
     public interface IElasticSearchService
     {
         public Task DeleteReviewAsync(int reviewId);
-
-
         public Task GetReviewIndexAsync(ReviewModel model);
-
         public Task<PaginationReviewModel> SearchReviewsAsync(string search, int currentPage);
     }
 }

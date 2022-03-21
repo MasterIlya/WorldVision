@@ -86,7 +86,7 @@ namespace WorldVision.Services.Mappers
                 AuthorScore = item.AuthorScore,
                 CreateDate = item.CreateDate,
                 UpdateDate = item.UpdateDate,
-                Rating = item.LikeCount
+                Rating = item.LikeCount.GetValueOrDefault()
             };
         }
 

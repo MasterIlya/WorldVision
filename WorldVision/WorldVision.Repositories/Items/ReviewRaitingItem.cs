@@ -14,6 +14,6 @@ namespace WorldVision.Repositories.Items
         public virtual byte AuthorScore { get; set; }
         public virtual DateTime CreateDate { get; set; }
         public virtual DateTime UpdateDate { get; set; }
-        public virtual int LikeCount { get; set; }
+        public virtual int? LikeCount { get; set; }
     }
 }
