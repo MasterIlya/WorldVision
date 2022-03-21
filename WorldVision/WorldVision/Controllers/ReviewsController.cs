@@ -1,9 +1,6 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using WorldVision.Services.IServices;
@@ -11,6 +8,7 @@ using WorldVision.Services.Models;
 
 namespace WorldVision.Controllers
 {
+    [Authorize]
     public class ReviewsController : Controller
     {
         private readonly IReviewsService _reviewsService;
@@ -38,6 +36,7 @@ namespace WorldVision.Controllers
 
             return View(model);
         }
+
 
         [HttpPost]
         public async Task UploadImage(IFormFile file, string email, string pageId)
@@ -120,7 +119,7 @@ namespace WorldVision.Controllers
 
                 var models = _cloudinaryService.GetFromCache(pageId, email);
 
-                if(models != null)
+                if (models != null)
                 {
                     await _reviewsService.CreateReviewImagesAsync(models, model.ReviewModel.ReviewId);
                 }
@@ -152,6 +151,7 @@ namespace WorldVision.Controllers
             return View("UserReviews", reviews);
         }
 
+
         [HttpGet]
         public async Task<IActionResult> GetReview(int reviewId, string type, string currentEmail)
         {
@@ -160,6 +160,7 @@ namespace WorldVision.Controllers
             return View("Review", model);
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetReviewNoAuth(int reviewId, string type)
         {
@@ -180,6 +181,7 @@ namespace WorldVision.Controllers
             await _reviewsService.RemoveLikeAsync(reviewId, email);
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> Search(string search, int currentPage)
         {
