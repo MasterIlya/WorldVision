@@ -16,5 +16,10 @@ namespace WorldVision.Controllers
             var models =  await _reviewsService.GetGeneralPageModelAsync();
             return View(models);
         }
+
+        public IActionResult About()
+        {
+            return View();
+        }
     }
 }

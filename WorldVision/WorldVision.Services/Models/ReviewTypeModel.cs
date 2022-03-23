@@ -4,9 +4,10 @@ using System.Text;
 
 namespace WorldVision.Services.Models
 {
-    public class ReviewTypesModel
+    public class ReviewTypeModel
     {
         public int TypeId { get; set; }
         public string Type { get; set; }
+        public string ImageUrl { get; set; }
     }
 }

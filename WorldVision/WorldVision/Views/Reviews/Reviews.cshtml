@@ -1,0 +1,88 @@
+﻿@model PaginationReviewModel
+@{
+    ViewData["Title"] = "Reviews";
+    Layout = "_Layout";
+
+}
+
+<body>
+    <div class="container">
+        <table class="table table-success table-striped">
+            <thead>
+                <tr style="text-align: center">
+                    <th scope="col">#</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Review Type</th>
+                    <th scope="col">Author Score</th>
+                    <th scope="col">Create Date</th>
+                </tr>
+            </thead>
+            <tbody style="text-align: center; ">
+                @for (var i = 0; i < Model.Models.Count; i++)
+                {
+                    <tr>
+                        <th scope="row">@((Model.CurrentPage - 1) * 10 + 1 + i)</th>
+                        <td>
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <a class="" asp-action="getreview" asp-controller="reviews" asp-route-currentEmail="@User.FindFirstValue(ClaimTypes.Email)"
+                                   asp-route-type="@Model.Models[i].ReviewType" asp-route-reviewId="@Model.Models[i].ReviewId">@Model.Models[i].Title</a>
+                            }
+                            else
+                            {
+                                <a class="" asp-action="getreviewnoauth" asp-controller="reviews"
+                                   asp-route-type="@Model.Models[i].ReviewType" asp-route-reviewId="@Model.Models[i].ReviewId">@Model.Models[i].Title</a>
+                            }
+
+                        </td>
+                        <td>@Model.Models[i].ReviewType</td>
+                        <td>@Model.Models[i].AuthorScore</td>
+                        <td>@Model.Models[i].UpdateDate</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            @if (Model.CurrentPage == 1)
+            {
+                <li class="page-item disabled">
+                    <a class="page-link" asp-action="getreviews" asp-controller="reviews"
+                       asp-route-currentPage="@(Model.CurrentPage - 1)" aria-disabled="true">Previous</a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-action="getreviews" asp-controller="reviews"
+                       asp-route-currentPage="@(Model.CurrentPage - 1)" aria-disabled="true">Previous</a>
+                </li>
+            }
+            @for (int i = 0; i < Model.CountOfPages; i++)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-action="getreviews" asp-controller="reviews"
+                       asp-route-currentPage="@(i + 1)">@(i + 1)</a>
+                </li>
+            }
+            @if (Model.CurrentPage == Model.CountOfPages || Model.CountOfPages == 1)
+            {
+                <li class="page-item disabled">
+                    <a class="page-link" asp-action="getreviews" asp-controller="reviews"
+                       asp-route-currentPage="@(Model.CurrentPage + 1)">Next</a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-action="getreviews" asp-controller="reviews"
+                       asp-route-currentPage="@(Model.CurrentPage + 1)">Next</a>
+                </li>
+            }
+        </ul>
+    </nav>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script type="text/javascript" src="@Url.Content("~/js/bootstrap.bundle.min.js")"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+</body>

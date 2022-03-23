@@ -81,7 +81,6 @@ namespace WorldVision.Services.Services
                 item.State = StateTypes.Blocked;
                 await _usersRepository.UpdateAsync(item);
             }
-
         }
 
         public async Task UnblockUsersAsync(int[] ids)
@@ -103,7 +102,6 @@ namespace WorldVision.Services.Services
                 item.Delisted = true;
                 await _usersRepository.UpdateAsync(item);
             }
-
         }
 
         public async Task GetAdminRightsAsync(int[] ids)

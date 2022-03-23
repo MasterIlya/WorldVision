@@ -9,5 +9,6 @@ namespace WorldVision.Repositories.Items
         [Key]
         public virtual int ReviewTypeId { get; set; }
         public virtual string ReviewType { get; set; }
+        public virtual string TypeImageUrl { get; set; }
     }
 }

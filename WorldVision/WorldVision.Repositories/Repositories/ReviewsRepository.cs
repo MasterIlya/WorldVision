@@ -32,14 +32,16 @@ namespace WorldVision.Repositories.Repositories
                 .ToListAsync();
         }
 
-        public async Task<List<ReviewItem>> GetReviewsInCategory(int categoryId, int take)
+        public async Task<List<ReviewItem>> GetReviewsInCategory(int categoryId, int skip, int take)
         {
             return await GetItems()
                 .Where(x => x.ReviewTypeId == categoryId)
                 .OrderByDescending(x => x.UpdateDate)
+                .Skip(skip)
                 .Take(take)
                 .ToListAsync();
         }
+
 
         public async Task<int> GetCountAsync(int userId)
         {
@@ -48,5 +50,11 @@ namespace WorldVision.Repositories.Repositories
                 .CountAsync();
         }
 
+        public async Task<int> GetCountInCategoryAsync(int categoryId)
+        {
+            return await GetItems()
+                .Where(x => x.ReviewTypeId == categoryId)
+                .CountAsync();
+        }
     }
 }

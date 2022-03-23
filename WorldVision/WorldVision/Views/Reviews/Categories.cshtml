@@ -1,0 +1,36 @@
+﻿@model List<ReviewTypeModel>
+@{
+    ViewData["Title"] = "Categories";
+    Layout = "_Layout";
+    int remains = Model.Count;
+    int columnCount = 3;
+    int elemNum = 0;
+    int rowCount = (remains + columnCount - 1) / columnCount;
+
+}
+<div class="container">
+    @for (var i = 0; i < rowCount; i++)
+    {
+        <div class="row">
+            @for (var j = elemNum; j < columnCount; j++)
+            {
+                <div class="col">
+                    <a asp-controller="reviews" asp-action="getreviews" asp-route-categoryId="@Model[j].TypeId"> <img style="display: block; margin: auto; width: 250px; height: 250px" src="@Model[j].ImageUrl" class="img-thumbnail" alt=""></a>
+                    <p style="margin-top: 10px; text-align: center; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; font-style: italic;">@Model[j].Type</p>
+                </div>
+            }
+        </div>
+        if (remains >= 3)
+        {
+            remains -= columnCount;
+            elemNum += columnCount;
+            columnCount += columnCount;
+        }
+        else
+        {
+            columnCount = remains;
+            elemNum += remains;
+            columnCount += remains;
+        }
+    }
+</div>

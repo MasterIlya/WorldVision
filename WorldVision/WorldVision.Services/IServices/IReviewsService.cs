@@ -8,7 +8,7 @@ namespace WorldVision.Services.IServices
     {
         public Task<int> CreateAsync(CompositeCreateReviewModel model);
         public Task<PaginationReviewModel> GetUserReviewsAsync(int currentPage, string email);
-        public Task<List<ReviewTypesModel>> GetAllReviewTypesAsync();
+        public Task<List<ReviewTypeModel>> GetAllReviewTypesAsync();
         public Task UpdateAsync(CompositeCreateReviewModel model);
         public Task<CreateReviewModel> GetReviewAsyncForUpdate(int reviewId);
         public Task RemoveAsync(int reviewId);
@@ -24,6 +24,7 @@ namespace WorldVision.Services.IServices
         public Task<ReviewLikeModel> GetLikeCurrentUserAsync(int userId);
         public Task<List<PopularTagModel>> GetPopularTagsAsync();
         public Task<GeneralPageModel> GetGeneralPageModelAsync();
+        public Task<PaginationReviewModel> GetReviewsInCategoryAsync(int categoryId, int currentPage);
 
     }
 }

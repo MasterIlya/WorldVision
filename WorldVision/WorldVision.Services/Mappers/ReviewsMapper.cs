@@ -96,16 +96,17 @@ namespace WorldVision.Services.Mappers
             {
                 Models = reviews,
                 CountOfPages = countOfPages,
-                CurrentPage = currentPage
+                CurrentPage = currentPage,
             };
         }
 
-        public static ReviewTypesModel Map(ReviewTypeItem item)
+        public static ReviewTypeModel Map(ReviewTypeItem item)
         {
-            return new ReviewTypesModel
+            return new ReviewTypeModel
             {
                 TypeId = item.ReviewTypeId,
-                Type = item.ReviewType
+                Type = item.ReviewType,
+                ImageUrl = item.TypeImageUrl
             };
         }
 

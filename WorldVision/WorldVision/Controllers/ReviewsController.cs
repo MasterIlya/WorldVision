@@ -193,5 +193,22 @@ namespace WorldVision.Controllers
             return View("SearchReviews", models);
         }
 
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> GetCategories()
+        {
+            var categories = await _reviewsService.GetAllReviewTypesAsync();
+
+            return View("Categories", categories);
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> GetReviews(int categoryId, int currentPage)
+        {
+            var models = await _reviewsService.GetReviewsInCategoryAsync(categoryId, currentPage);
+
+            return View("Reviews", models);
+        }
     }
 }

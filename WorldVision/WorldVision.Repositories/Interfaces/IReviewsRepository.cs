@@ -15,6 +15,7 @@ namespace WorldVision.Repositories.Interfaces
         public Task<List<ReviewItem>> GetAsync(int skip, int take, int userId);
         public Task<List<ReviewItem>> GetAsync(int skip, int take);
         public Task<int> GetCountAsync(int userId);
-        public Task<List<ReviewItem>> GetReviewsInCategory(int categoryId, int take);
+        public Task<List<ReviewItem>> GetReviewsInCategory(int categoryId, int skip, int take);
+        public Task<int> GetCountInCategoryAsync(int categoryId);
     }
 }
