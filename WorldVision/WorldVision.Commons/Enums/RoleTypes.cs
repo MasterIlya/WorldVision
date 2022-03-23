@@ -1,4 +1,4 @@
-﻿namespace SmartStore.Commons.Enums
+﻿namespace WorldVision.Commons.Enums
 {
     public enum RoleTypes
         : byte

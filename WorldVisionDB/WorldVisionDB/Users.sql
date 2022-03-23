@@ -6,5 +6,7 @@
 	[FName] NVARCHAR(30),
 	[LName] NVARCHAR(30),
 	[RegistrationDate] DATETIME NOT NULL,
+	[State] TINYINT NOT NULL DEFAULT 0,
 	[Role] TINYINT NOT NULL,
+	[Delisted] BIT NOT NULL DEFAULT 0
 )

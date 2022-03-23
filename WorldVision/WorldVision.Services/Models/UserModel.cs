@@ -1,5 +1,5 @@
-﻿using SmartStore.Commons.Enums;
-using System;
+﻿using System;
+using WorldVision.Commons.Enums;
 
 namespace WorldVision.Services.Models
 {
@@ -11,6 +11,8 @@ namespace WorldVision.Services.Models
         public string FName { get; set; }
         public string LName { get; set; }
         public DateTime RegistrationDate { get; set; }
+        public StateTypes State { get; set; }
         public RoleTypes Role { get; set; }
+        public bool Delisted { get; set; }
     }
 }

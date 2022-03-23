@@ -54,6 +54,10 @@
                                         </button>
                                         <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
                                             <li><a class="dropdown-item" asp-action="GetUserReviews" asp-controller="Reviews" asp-route-email="@User.FindFirstValue(ClaimTypes.Email)">My Reviews</a></li>
+                                            @if (User.IsInRole("Admin"))
+                                            {
+                                                <li><a class="dropdown-item" asp-action="GetUsers" asp-controller="Users">Users</a></li>
+                                            }
                                             <li><a class="dropdown-item" asp-action="logout" asp-controller="users">Logout</a></li>
                                         </ul>
                                     </div>
@@ -121,7 +125,7 @@
                             {
                                 <h5 class="widget-title">Покупай у нас<span></span></h5>
                                 <p>Зарегистрируйся на сайте, чтобы как можно удобнее совершать покупки.</p>
-                                <a asp-controller="authorization" asp-action="registration" class="btn btn1" target="_blank">Зарегистрироваться</a>
+                                <a asp-controller="users" asp-action="registration" class="btn btn1" target="_blank">Зарегистрироваться</a>
                             }
 
                         </div>

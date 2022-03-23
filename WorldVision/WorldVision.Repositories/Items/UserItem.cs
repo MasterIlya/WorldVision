@@ -1,4 +1,4 @@
-﻿using SmartStore.Commons.Enums;
+﻿using WorldVision.Commons.Enums;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -15,7 +15,9 @@ namespace WorldVision.Repositories.Items
         public virtual string FName { get; set; }
         public virtual string LName { get; set; }
         public virtual DateTime RegistrationDate { get; set; }
+        public virtual StateTypes State { get; set; }
         public virtual RoleTypes Role { get; set; }
+        public virtual bool Delisted { get; set; }
     }
 
 }

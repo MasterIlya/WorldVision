@@ -79,7 +79,7 @@
             <ul class="cloud" role="navigation" aria-label="Webdev tag cloud">
                 @foreach (var tag in Model.Tags)
                 {
-                    <li><a href="#">@tag.Tag</a></li>
+                    <li><a asp-action="Search" asp-controller="Reviews" asp-route-search="@tag.Tag">@tag.Tag</a></li>
                 }
             </ul>
         </div>

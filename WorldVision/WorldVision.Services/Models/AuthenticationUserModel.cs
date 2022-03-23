@@ -1,4 +1,4 @@
-﻿using SmartStore.Commons.Enums;
+﻿using WorldVision.Commons.Enums;
 
 namespace WorldVision.Services.Models
 {

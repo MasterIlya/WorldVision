@@ -17,6 +17,7 @@ namespace WorldVision.Repositories.Repositories
         public async Task<List<UserItem>> GetAsync(int skip, int take)
         {
             return await GetItems()
+                .Where(x => !x.Delisted)
                 .OrderBy(x => x.UserId)
                 .Skip(skip)
                 .Take(take)
@@ -41,7 +42,26 @@ namespace WorldVision.Repositories.Repositories
 
         public async Task<int> GetCountAsync()
         {
-            return await GetItems().CountAsync();
+            return await GetItems()
+                .Where(x => !x.Delisted)
+                .CountAsync();
         }
+
+        public async Task<List<UserItem>> GetBySearchStringAsync(string searchString, int skip, int take)
+        {
+            return await GetItems()
+                .Where(x => x.Email.Contains(searchString) && !x.Delisted)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+        }
+
+        public async Task<int> GetCountForSearchingAsync(string searchString)
+        {
+            return await GetItems()
+                .Where(x => x.Email.Contains(searchString) && !x.Delisted)
+                .CountAsync();
+        }
+
     }
 }

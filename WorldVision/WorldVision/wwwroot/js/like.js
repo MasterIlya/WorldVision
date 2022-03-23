@@ -31,18 +31,10 @@ function like(value) {
   }
 
 function UpdateTolike() {
-/*    let newImg = document.createElement("img")*/
-    //newImg.src = "https://res.cloudinary.com/dtomjloda/image/upload/v1646919016/like_kyrkdt.png"
-    //newImg.height = 39
-    //newImg.width = 45
     document.getElementById("like").src = "https://res.cloudinary.com/dtomjloda/image/upload/v1646919016/like_kyrkdt.png"
 
 }
 
 function UpdateTodislike() {
-/*    let newImg = document.createElement("img")*/
-    //newImg.src = 
-    //newImg.height = 39
-    //newImg.width = 45
     document.getElementById("like").src = "https://res.cloudinary.com/dtomjloda/image/upload/v1646918477/like_kiw3rf.png"
 }
