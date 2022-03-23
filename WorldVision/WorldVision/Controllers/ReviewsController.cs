@@ -16,7 +16,6 @@ namespace WorldVision.Controllers
         private readonly ICloudinaryService _cloudinaryService;
         private readonly IElasticSearchService _elasticSearchService;
 
-
         public ReviewsController(IReviewsService reviewsService, IUsersService usersService,
             ICloudinaryService cloudinaryService, IElasticSearchService elasticSearchService)
         {
@@ -27,16 +26,16 @@ namespace WorldVision.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> CreateReview(string imgUrl)
+        public async Task<IActionResult> CreateReview(string email)
         {
             var model = new CompositeCreateReviewModel
             {
-                Types = await _reviewsService.GetAllReviewTypesAsync()
+                Types = await _reviewsService.GetAllReviewTypesAsync(),
+                Email = email
             };
 
             return View(model);
         }
-
 
         [HttpPost]
         public async Task UploadImage(IFormFile file, string email, string pageId)
@@ -92,13 +91,14 @@ namespace WorldVision.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> UpdateReview(int reviewId)
+        public async Task<IActionResult> UpdateReview(int reviewId, string email)
         {
             var model = new CompositeCreateReviewModel
             {
                 ReviewModel = await _reviewsService.GetReviewAsyncForUpdate(reviewId),
                 Types = await _reviewsService.GetAllReviewTypesAsync(),
-                Images = await _reviewsService.GetImagesAsync(reviewId)
+                Images = await _reviewsService.GetImagesAsync(reviewId),
+                Email = email
             };
 
             return View("CreateReview", model);
@@ -148,9 +148,10 @@ namespace WorldVision.Controllers
         {
             var reviews = await _reviewsService.GetUserReviewsAsync(currentPage, email);
 
+            reviews.Email = email;
+
             return View("UserReviews", reviews);
         }
-
 
         [HttpGet]
         public async Task<IActionResult> GetReview(int reviewId, string type, string currentEmail)
@@ -187,7 +188,10 @@ namespace WorldVision.Controllers
         {
             var models = await _elasticSearchService.SearchReviewsAsync(search, currentPage);
 
-            return View("Reviews", models);
+            models.Search = search;
+
+            return View("SearchReviews", models);
         }
+
     }
 }

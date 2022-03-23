@@ -1,6 +1,6 @@
-﻿using SmartStore.Commons.Enums;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using WorldVision.Commons.Enums;
 using WorldVision.Repositories.Items;
 using WorldVision.Services.Models;
 
@@ -55,7 +55,9 @@ namespace WorldVision.Services.Mappers
                 FName = item.FName,
                 LName = item.LName,
                 RegistrationDate = item.RegistrationDate,
-                Role = item.Role
+                Role = item.Role,
+                State = item.State,
+                Delisted = item.Delisted
             };
         }
 
@@ -63,7 +65,7 @@ namespace WorldVision.Services.Mappers
         {
             return new PaginationUserModel
             {
-                ModelList = users,
+                Users = users,
                 CountOfPages = countOfPages,
                 CurrentPage = currentPage
             };

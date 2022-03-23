@@ -24,7 +24,7 @@
 }
 <div class="container">
     <form id="form2" name="form2" asp-action="@msg" asp-controller="Reviews"
-          asp-route-email="@User.FindFirstValue(ClaimTypes.Email)" asp-route-pageId="@pageId"
+          asp-route-email="@Model.Email" asp-route-pageId="@pageId"
           enctype="multipart/form-data" data-parsley-validate class="form-horizontal form-label-left">
         @if (msg == "UpdateReview")
         {
@@ -62,7 +62,7 @@
             <span asp-validation-for="ReviewModel.AuthorScore" class="text-danger"></span>
         </div>
         <div class="form-group" style="margin-top: 10px; margin-bottom: 10px">
-            <input id="hiddenEmail" value="@User.FindFirstValue(ClaimTypes.Email)" hidden>
+            <input id="hiddenEmail" value="@Model.Email" hidden>
             <input id="pageId" value="@pageId" hidden>
             <label class="control-label col-md-2" for="first-name">
                 Upload Photo <span class="required">*</span>

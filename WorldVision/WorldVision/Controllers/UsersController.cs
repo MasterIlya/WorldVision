@@ -4,11 +4,12 @@ using Microsoft.AspNetCore.Authentication.Facebook;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using WorldVision.Commons.Helpers;
+using WorldVision.Commons.Enums;
 using WorldVision.Services.IServices;
 using WorldVision.Services.Models;
 
@@ -28,7 +29,8 @@ namespace WorldVision.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (await _usersService.GetUserByEmailAsync(model.Email) == null)
+                var user = await _usersService.GetUserByEmailAsync(model.Email);
+                if (user == null || user.Delisted)
                 {
                     await _usersService.CreateAsync(model);
 
@@ -82,9 +84,9 @@ namespace WorldVision.Controllers
 
             var socialNetworkUser = new SocialNetworkAuthenticationModel
             {
-                Email = claims.FirstOrDefault(x => x.Type == AuthenticationConstant.GoogleClaimEmailType)?.Value,
-                FName = claims.FirstOrDefault(x => x.Type == AuthenticationConstant.GoogleClaimFNameType)?.Value,
-                LName = claims.FirstOrDefault(x => x.Type == AuthenticationConstant.GoogleClaimLNameType)?.Value
+                Email = claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value,
+                FName = claims.FirstOrDefault(x => x.Type == ClaimTypes.GivenName)?.Value,
+                LName = claims.FirstOrDefault(x => x.Type == ClaimTypes.Surname)?.Value
             };
 
             if (await _usersService.GetUserByEmailAsync(socialNetworkUser.Email) == null)
@@ -103,10 +105,10 @@ namespace WorldVision.Controllers
             {
                 var user = await _usersService.GetUserByEmailAsync(userModel.Email);
 
-                if (user != null && user.Password == userModel.Password)
+                if (user != null && user.State != StateTypes.Blocked && user.Password == userModel.Password )
                 {
 
-                    await Authenticate(user.UserId, user.Email, user.FName);
+                    await Authenticate(user.UserId, user.Email, user.FName, user.Role);
                     return RedirectToAction("Index", "Home");
                 }
                 ModelState.AddModelError("", "Incorrect login and/or password, or you are blocked");
@@ -116,21 +118,57 @@ namespace WorldVision.Controllers
         }
 
         [HttpGet]
-        [Authorize]
-        public IActionResult GetUsers(int currentPage)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetUsers(int currentPage)
         {
-            var users = _usersService.GetUsersAsync(currentPage);
+            var model = await _usersService.GetUsersAsync(currentPage);
+
+            return View("Users", model);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ChangeState(int[] ids, string btn)
+        {
+            if (btn == "block")
+            {
+                await _usersService.BlockUsersAsync(ids);
+            }
+            else if (btn == "unblock")
+            {
+                await _usersService.UnblockUsersAsync(ids);
+            }
+            else if (btn == "delete")
+            {
+                await _usersService.DeleteUsersAsync(ids);
+            }
+            else if (btn == "getadminright")
+            {
+                await _usersService.GetAdminRightsAsync(ids);
+            }
+
+            return RedirectToAction("GetUsers");
+
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> SearchByEmail(string search, int currentPage)
+        {
+            var users = await _usersService.SearchByEmailAsync(search, currentPage);
 
             return View("Users", users);
         }
+         
 
-        private async Task Authenticate(int userId, string email, string name)
+        private async Task Authenticate(int userId, string email, string name, RoleTypes role)
         {
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
                 new Claim(ClaimTypes.Email, email),
-                new Claim(ClaimTypes.Name, name)
+                new Claim(ClaimTypes.Name, name),
+                new Claim(ClaimTypes.Role, Enum.GetName(typeof(RoleTypes), role))
             };
 
             ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
