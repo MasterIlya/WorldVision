@@ -9,6 +9,7 @@ using WorldVision.Repositories.Repositories;
 using WorldVision.Services.Services;
 using Elasticsearch.Net;
 using Nest;
+using Microsoft.AspNetCore.Http;
 
 namespace WorldVision
 {

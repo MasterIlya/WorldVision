@@ -9,5 +9,7 @@ namespace WorldVision.Services.Models
         public List<ReviewModel> LastReviewsInCategory { get; set; }
         public int Rating { get; set; }
         public ReviewLikeModel CurrentUserLike { get; set; }
+        public List<ReviewCommentModel> Comments { get; set; } 
+        public CreateCommentModel Comment { get; set; }
     }
 }

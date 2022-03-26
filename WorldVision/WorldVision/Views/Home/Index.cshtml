@@ -4,23 +4,29 @@
     Layout = "_Layout";
     Random rand = new Random();
 }
-<link rel="stylesheet" href="~/css/tags.css" type="text/css" />
-<link rel="stylesheet" href="~/css/generalHead.css" type="text/css" />
-<style>
-    td {
-        background-color: aqua
+@{
+    string theme = null;
+    httpContextAccessor.HttpContext.Request.Cookies.TryGetValue("theme", out theme);
+    if (theme == "dark")
+    {
+        <link rel="stylesheet" href="~/css/darkGeneralHead.css" type="text/css" />
     }
-</style>
+    if (theme == "light" || theme == null)
+    {
+        <link rel="stylesheet" href="~/css/generalHead.css" type="text/css" />
+    }
+}
+<link rel="stylesheet" href="~/css/tags.css" type="text/css" />
 <div class="container">
     <div class="row">
         <div class="col">
-            <div class="header-h5"><h5>Last Reviews</h5></div>
+            <div class="header-h5"><h5>@Localizer["Last Reviews"]</h5></div>
             <table class="table table-bordered border-light">
                 <tbody>
                     @foreach (var lastReview in Model.LastReviews)
                     {
-                        <tr style="background-color: rgb(232, 236, 255)">
-                            <th scope="row" >@lastReview.CreateDate.ToShortDateString()</th>
+                        <tr class="MyTable">
+                            <th scope="row">@lastReview.CreateDate.ToShortDateString()</th>
                             <td>
                                 @if (User.Identity.IsAuthenticated)
                                 {
@@ -35,7 +41,7 @@
                             </td>
                             <td>@lastReview.UserName</td>
                             <td style="text-align: center">
-                                <h6>Rating</h6>
+                                <h6>@Localizer["Rating"]</h6>
                                 <p>@lastReview.Rating</p>
                             </td>
                         </tr>
@@ -44,12 +50,12 @@
             </table>
         </div>
         <div class="col">
-            <div class="header-h5"><h5>The Most Popular Reviews</h5></div>
+            <div class="header-h5"><h5>@Localizer["The Most Popular Reviews"]</h5></div>
             <table class="table table-bordered border-light">
                 <tbody>
                     @foreach (var popularReview in Model.PopularReviews)
                     {
-                        <tr style="background-color: rgb(232, 236, 255); ">
+                        <tr class="MyTable">
                             <th scope="row">@popularReview.CreateDate.ToShortDateString()</th>
 
                             <td>
@@ -66,7 +72,7 @@
                             </td>
                             <td>@popularReview.UserName</td>
                             <td style="text-align: center">
-                                <h6>Rating</h6>
+                                <h6>@Localizer["Rating"]</h6>
                                 <p>@popularReview.Rating</p>
                             </td>
                         </tr>
@@ -75,7 +81,7 @@
             </table>
         </div>
         <div class="col">
-            <div class="header-h5"><h5>Tags Cloud</h5></div>
+            <div class="header-h5"><h5>@Localizer["Tags Cloud"]</h5></div>
             <ul class="cloud" role="navigation" aria-label="Webdev tag cloud">
                 @foreach (var tag in Model.Tags)
                 {
@@ -85,5 +91,6 @@
         </div>
     </div>
 </div>
+
 
 

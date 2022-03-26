@@ -42,8 +42,8 @@ namespace WorldVision.Services.Mappers
                 Title = item.Title,
                 Content = item.Content,
                 AuthorScore = item.AuthorScore,
-                CreateDate = item.CreateDate,
-                UpdateDate = item.UpdateDate,
+                CreateDate = item.CreateDate.ToLocalTime(),
+                UpdateDate = item.UpdateDate.ToLocalTime(),
                 Rating = rating,
             };
         }
@@ -63,8 +63,8 @@ namespace WorldVision.Services.Mappers
                 Title = item.Title,
                 Content = item.Content,
                 AuthorScore = item.AuthorScore,
-                CreateDate = item.CreateDate,
-                UpdateDate = item.UpdateDate,
+                CreateDate = item.CreateDate.ToLocalTime(),
+                UpdateDate = item.UpdateDate.ToLocalTime(),
                 Rating = rating[item.ReviewId]
             };
         }
@@ -84,8 +84,8 @@ namespace WorldVision.Services.Mappers
                 Title = item.Title,
                 Content = item.Content,
                 AuthorScore = item.AuthorScore,
-                CreateDate = item.CreateDate,
-                UpdateDate = item.UpdateDate,
+                CreateDate = item.CreateDate.ToLocalTime(),
+                UpdateDate = item.UpdateDate.ToLocalTime(),
                 Rating = item.LikeCount.GetValueOrDefault()
             };
         }
@@ -181,14 +181,16 @@ namespace WorldVision.Services.Mappers
             };
         }
 
-        public static CompositeReviewModel Map(ReviewModel review, List<ReviewImageModel> images, List<ReviewModel> lastReviews, ReviewLikeModel currentUserLike = null)
+        public static CompositeReviewModel Map(ReviewModel review, List<ReviewImageModel> images, List<ReviewModel> lastReviews,
+            List<ReviewCommentModel> comments, ReviewLikeModel currentUserLike = null)
         {
             return new CompositeReviewModel
             {
                 Review = review,
                 Images = images,
                 LastReviewsInCategory = lastReviews,
-                CurrentUserLike = currentUserLike
+                CurrentUserLike = currentUserLike,
+                Comments = comments
             };
         }
 
@@ -203,6 +205,7 @@ namespace WorldVision.Services.Mappers
                 UserId = item.UserId
             };
         }
+
         public static PopularTagModel Map(ReviewTagCounterItem item)
         {
             return new PopularTagModel
@@ -210,6 +213,7 @@ namespace WorldVision.Services.Mappers
                 Tag = item.Tag
             };
         }
+
         public static ReviewTagItem Map(string tag, int reviewId)
         {
             return new ReviewTagItem
@@ -218,6 +222,7 @@ namespace WorldVision.Services.Mappers
                 Tag = tag
             };
         }
+
         public static GeneralPageModel Map (List<ReviewModel> lastReviews, List<ReviewModel> popularReviews, List<PopularTagModel> tags)
         {
             return new GeneralPageModel
@@ -226,6 +231,29 @@ namespace WorldVision.Services.Mappers
                 PopularReviews = popularReviews,
                 Tags = tags
             };
+        }
+
+        public static ReviewCommentItem Map(CreateCommentModel model, int userId)
+        {
+            return new ReviewCommentItem
+            {
+                ReviewId = model.ReviewId,
+                UserId = userId,
+                Content = model.Content,
+                CreateDate = DateTime.UtcNow
+            };
+        }
+
+        public static ReviewCommentModel Map(ReviewCommentItem item, UserItem userItem)
+        {
+            return new ReviewCommentModel
+            {
+                Email = userItem.Email,
+                Name = $"{userItem.FName} {userItem.LName}",
+                Content = item.Content,
+                CreateDate = item.CreateDate.ToLocalTime().ToString()
+            };
+
         }
     }
 }

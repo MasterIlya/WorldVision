@@ -1,6 +1,6 @@
 ﻿@model List<ReviewTypeModel>
 @{
-    ViewData["Title"] = "Categories";
+    ViewData["Title"] = Localizer["PageName"];
     Layout = "_Layout";
     int remains = Model.Count;
     int columnCount = 3;
@@ -16,7 +16,7 @@
             {
                 <div class="col">
                     <a asp-controller="reviews" asp-action="getreviews" asp-route-categoryId="@Model[j].TypeId"> <img style="display: block; margin: auto; width: 250px; height: 250px" src="@Model[j].ImageUrl" class="img-thumbnail" alt=""></a>
-                    <p style="margin-top: 10px; text-align: center; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; font-style: italic;">@Model[j].Type</p>
+                    <p style="margin-top: 10px; text-align: center; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; font-style: italic;">@Localizer[Model[j].Type]</p>
                 </div>
             }
         </div>

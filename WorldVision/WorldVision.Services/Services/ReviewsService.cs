@@ -19,6 +19,7 @@ namespace WorldVision.Services.Services
         private readonly IReviewTagCounterRepository _reviewTagCounterRepository;
         private readonly IReviewTagsRepository _reviewTagsRepository;
         private readonly IReviewRaitingRepository _reviewLikeCounterRepository;
+        private readonly IReviewCommentsRepository _reviewCommentsRepository;
         private const int DefaultReviewsCount = 10;
         private const int DefaultTagsCount = 20;
         private const int DefaultCurrentPage = 1;
@@ -26,7 +27,8 @@ namespace WorldVision.Services.Services
         public ReviewsService(IReviewsRepository reviewsRepository, IReviewTypesRepository reviewTypesRepository,
             IUsersRepository usersRepository, IReviewImagesRepository reviewImagesRepository,
             IReviewLikesRepository reviewLikesRepository, IReviewTagCounterRepository reviewTagCounterRepository,
-            IReviewTagsRepository reviewTagsRepository, IReviewRaitingRepository reviewLikeCounterRepository)
+            IReviewTagsRepository reviewTagsRepository, IReviewRaitingRepository reviewLikeCounterRepository,
+            IReviewCommentsRepository reviewCommentsRepository)
         {
             _reviewsRepository = reviewsRepository;
             _reviewTypesRepository = reviewTypesRepository;
@@ -36,6 +38,7 @@ namespace WorldVision.Services.Services
             _reviewTagCounterRepository = reviewTagCounterRepository;
             _reviewTagsRepository = reviewTagsRepository;
             _reviewLikeCounterRepository = reviewLikeCounterRepository;
+            _reviewCommentsRepository = reviewCommentsRepository;
         }
 
         public async Task<int> CreateAsync(CompositeCreateReviewModel model)
@@ -230,12 +233,17 @@ namespace WorldVision.Services.Services
             var userItem = await _usersRepository.GetAsync(reviewItem.UserId);
             var fullName = $"{userItem.FName} {userItem.LName}";
 
+            var commentItems = await _reviewCommentsRepository.GetByReviewIdAsync(reviewId);
+            var ids = commentItems.Select(x => x.UserId).Distinct().ToList();
+            var usersWithComments = await _usersRepository.GetUsersAsync(ids);
+
             var rating = await GetReviewRatingAsync(reviewId);
             var review = ReviewsMapper.Map(reviewItem, types, fullName, tags, rating);
             var images = await GetImagesAsync(reviewId);
             var lastReviews = await GetReviewsInCategoryAsync(typeId);
+            var comments = commentItems.Select(x => ReviewsMapper.Map(x, usersWithComments.FirstOrDefault(x => x.UserId == x.UserId))).ToList();
 
-            var compositeModel = ReviewsMapper.Map(review, images, lastReviews);
+            var compositeModel = ReviewsMapper.Map(review, images, lastReviews, comments);
 
             return compositeModel;
         }
@@ -250,13 +258,18 @@ namespace WorldVision.Services.Services
             var fullName = $"{userItem.FName} {userItem.LName}";
             var currentUser = await _usersRepository.GetByEmailAsync(currentEmail);
 
+            var commentItems = await _reviewCommentsRepository.GetByReviewIdAsync(reviewId);
+            var ids = commentItems.Select(x => x.UserId).Distinct().ToList();
+            var usersWithComments = await _usersRepository.GetUsersAsync(ids);
+
             var rating = await GetReviewRatingAsync(reviewId);
             var review = ReviewsMapper.Map(reviewItem, types, fullName, tags, rating);
             var images = await GetImagesAsync(reviewId);
             var lastReviews = await GetReviewsInCategoryAsync(typeId);
             var currentUserLike = await GetLikeCurrentUserAsync(currentUser.UserId);
+            var comments = commentItems.Select(x => ReviewsMapper.Map(x, usersWithComments.FirstOrDefault(x => x.UserId == x.UserId))).ToList();
 
-            var compositeModel = ReviewsMapper.Map(review, images, lastReviews, currentUserLike);
+            var compositeModel = ReviewsMapper.Map(review, images, lastReviews, comments, currentUserLike);
 
             return compositeModel;
         }
@@ -320,6 +333,39 @@ namespace WorldVision.Services.Services
             var model = ReviewsMapper.Map(lastReviews, popularReviews, tags);
 
             return model;
+        }
+
+        public async Task<int> CreateReviewCommentAsync(CreateCommentModel model)
+        {
+            var user = await _usersRepository.GetByEmailAsync(model.Email);
+
+            var item = ReviewsMapper.Map(model, user.UserId);
+
+            await _reviewCommentsRepository.CreateAsync(item);
+
+            return item.CommentId;
+        }
+
+        public async Task<ReviewCommentModel> GetReviewCommentAsync(int commentId)
+        {
+            var item = await _reviewCommentsRepository.GetAsync(commentId);
+
+            var user = await _usersRepository.GetAsync(item.UserId);
+
+            var model = ReviewsMapper.Map(item, user);
+
+            return model;
+        }
+        
+        public async Task<List<ReviewCommentModel>> GetCommentsByReviewIdAsync(int reviewId, int skip)
+        {
+            var commentItems = await _reviewCommentsRepository.GetByReviewIdAsync(reviewId, skip);
+            var ids = commentItems.Select(x => x.UserId).Distinct().ToList();
+            var usersWithComments = await _usersRepository.GetUsersAsync(ids);
+
+            var comments = commentItems.Select(x => ReviewsMapper.Map(x, usersWithComments.FirstOrDefault(x => x.UserId == x.UserId))).ToList();
+
+            return comments;
         }
     }
 }

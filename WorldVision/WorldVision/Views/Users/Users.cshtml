@@ -1,6 +1,6 @@
 ﻿@model PaginationUserModel
 @{
-    ViewData["Title"] = "Users";
+    ViewData["Title"] = Localizer["PageName"];
     Layout = "_Layout";
 
 }
@@ -9,8 +9,8 @@
     <div class="container" style="margin-bottom: -50px">
         <form asp-action="searchbyemail" asp-controller="users" method="get">
             <div class="d-flex w-25 " style="margin-right: 10px">
-                <input class="form-control me-2" type="search" placeholder="Search users" name="search">
-                <button style="margin-right: 20px" type="submit" class="btn btn-primary">Search</button>
+                <input class="form-control me-2" type="search" placeholder=@Localizer["Search users"] name="search">
+                <button style="margin-right: 20px" type="submit" class="btn btn-primary">@Localizer["Search"]</button>
             </div>
         </form>
     </div>
@@ -19,30 +19,30 @@
         <div class="container">
             <ul class="nav justify-content-start" style="margin-bottom: 10px">
                 <li class="nav-item">
-                    <button class="btn btn-outline-danger" type="submit" style="margin-right: 10px" id="first" value="block" name="btn">Block checked</button>
+                    <button class="btn btn-outline-danger" type="submit" style="margin-right: 10px" id="first" value="block" name="btn">@Localizer["Block checked"]</button>
                 </li>
                 <li class="nav-item">
-                    <button class="btn btn-outline-danger" type="submit" style="margin-right: 10px" id="second" value="unblock" name="btn">Unblock checked</button>
+                    <button class="btn btn-outline-danger" type="submit" style="margin-right: 10px" id="second" value="unblock" name="btn">@Localizer["Unblock checked"]</button>
                 </li>
                 <li class="nav-item">
-                    <button class="btn btn-outline-danger" type="submit" style="margin-right: 10px" id="third" value="delete" name="btn">Delete checked</button>
+                    <button class="btn btn-outline-danger" type="submit" style="margin-right: 10px" id="third" value="delete" name="btn">@Localizer["Delete checked"]</button>
                 </li>
                 <li class="nav-item">
-                    <button class="btn btn-outline-danger" type="submit" style="margin-right: 10px" id="fourth" value="getadminright" name="btn">Get admin rights checked</button>
+                    <button class="btn btn-outline-danger" type="submit" style="margin-right: 10px" id="fourth" value="getadminright" name="btn">@Localizer["Get admin rights checked"]</button>
                 </li>
             </ul>
             <table class="table table-success table-striped">
                 <thead>
                     <tr>
                         <th scope="col">#</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Registration Date</th>
-                        <th scope="col">Role</th>
-                        <th scope="col">State</th>
+                        <th scope="col">@Localizer["Name"]</th>
+                        <th scope="col">@Localizer["Email"]</th>
+                        <th scope="col">@Localizer["Registration Date"]</th>
+                        <th scope="col">@Localizer["Role"]</th>
+                        <th scope="col">@Localizer["State"]</th>
                         <th>
                             <div class="checkbox">
-                                <button class="btn btn-danger" type="button" id="btn">Check All</button>
+                                <button class="btn btn-danger" type="button" id="btn">@Localizer["Check All"]</button>
                             </div>
                         </th>
 
@@ -76,13 +76,13 @@
                 @if (Model.CurrentPage == 1)
                 {
                     <li class="page-item disabled">
-                        <a class="page-link" asp-action="getusers" asp-controller="users" asp-route-currentPage="@(Model.CurrentPage - 1)" aria-disabled="true">Previous</a>
+                        <a class="page-link" asp-action="getusers" asp-controller="users" asp-route-currentPage="@(Model.CurrentPage - 1)" aria-disabled="true">@Localizer["Previous"]</a>
                     </li>
                 }
                 else
                 {
                     <li class="page-item">
-                        <a class="page-link" asp-action="getusers" asp-controller="users" asp-route-currentPage="@(Model.CurrentPage - 1)" aria-disabled="true">Previous</a>
+                        <a class="page-link" asp-action="getusers" asp-controller="users" asp-route-currentPage="@(Model.CurrentPage - 1)" aria-disabled="true">@Localizer["Previous"]</a>
                     </li>
                 }
                 @for (int i = 0; i < Model.CountOfPages; i++)
@@ -92,13 +92,13 @@
                 @if (Model.CurrentPage == Model.CountOfPages || Model.CountOfPages == 1)
                 {
                     <li class="page-item disabled">
-                        <a class="page-link" asp-action="getusers" asp-controller="users" asp-route-currentPage="@(Model.CurrentPage + 1)">Next</a>
+                        <a class="page-link" asp-action="getusers" asp-controller="users" asp-route-currentPage="@(Model.CurrentPage + 1)">@Localizer["Next"]</a>
                     </li>
                 }
                 else
                 {
                     <li class="page-item">
-                        <a class="page-link" asp-action="getusers" asp-controller="users" asp-route-currentPage="@(Model.CurrentPage + 1)">Next</a>
+                        <a class="page-link" asp-action="getusers" asp-controller="users" asp-route-currentPage="@(Model.CurrentPage + 1)">@Localizer["Next"]</a>
                     </li>
                 }
             </ul>
@@ -112,14 +112,14 @@
                 {
                     <li class="page-item disabled">
                         <a class="page-link" asp-action="Search" asp-controller="users"
-                           asp-route-currentPage="@(Model.CurrentPage - 1)" asp-route-search="@Model.Search" aria-disabled="true">Previous</a>
+                           asp-route-currentPage="@(Model.CurrentPage - 1)" asp-route-search="@Model.Search" aria-disabled="true">@Localizer["Previous"]</a>
                     </li>
                 }
                 else
                 {
                     <li class="page-item">
                         <a class="page-link" asp-action="Search" asp-controller="users"
-                           asp-route-currentPage="@(Model.CurrentPage - 1)" asp-route-search="@Model.Search" aria-disabled="true">Previous</a>
+                           asp-route-currentPage="@(Model.CurrentPage - 1)" asp-route-search="@Model.Search" aria-disabled="true">@Localizer["Previous"]</a>
                     </li>
                 }
                 @for (int i = 0; i < Model.CountOfPages; i++)
@@ -133,14 +133,14 @@
                 {
                     <li class="page-item disabled">
                         <a class="page-link" asp-action="Search" asp-controller="users"
-                           asp-route-search="@Model.Search" asp-route-currentPage="@(Model.CurrentPage + 1)">Next</a>
+                           asp-route-search="@Model.Search" asp-route-currentPage="@(Model.CurrentPage + 1)">@Localizer["Next"]</a>
                     </li>
                 }
                 else
                 {
                     <li class="page-item">
                         <a class="page-link" asp-action="Search" asp-controller="users"
-                           asp-route-search="@Model.Search" asp-route-currentPage="@(Model.CurrentPage + 1)">Next</a>
+                           asp-route-search="@Model.Search" asp-route-currentPage="@(Model.CurrentPage + 1)">@Localizer["Next"]</a>
                     </li>
                 }
             </ul>

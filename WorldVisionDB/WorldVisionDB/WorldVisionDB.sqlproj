@@ -66,5 +66,6 @@
     <Build Include="ReviewTags.sql" />
     <Build Include="TakePopularTags.sql" />
     <Build Include="TakePopularReviews.sql" />
+    <Build Include="ReviewComments.sql" />
   </ItemGroup>
 </Project>
