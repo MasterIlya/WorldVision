@@ -1,0 +1,54 @@
+
+
+.header-h5 {
+    position: relative;
+    text-align: center;
+    margin-bottom: .5rem;
+}
+
+    .header-h5 h5 {
+        display: inline-block;
+        background: blueviolet;
+        background-color: #222222;
+        margin-bottom: 0;
+        padding: 0.25rem .875rem;
+        border-left: .125rem solid #e0e0e0;
+        border-right: .125rem solid #e0e0e0;
+        font-size: 1.25rem;
+        text-transform: uppercase;
+        color: #FFE4E1;
+    }
+
+    .header-h5::after {
+        content: "";
+        position: absolute;
+        background: #e0e0e0;
+        height: .125rem;
+        left: 0;
+        top: 50%;
+        width: 100%;
+        transform: translateY(-50%);
+        z-index: -999;
+    }
+
+.header-h5-left {
+    text-align: left;
+}
+
+    .header-h5-left h5 {
+        padding-left: 0;
+        border-left: none;
+    }
+
+.header-h5-right {
+    text-align: right;
+}
+
+    .header-h5-right h5 {
+        padding-right: 0;
+        border-right: none;
+    }
+
+.MyTable {
+    background-color: #696969;
+}

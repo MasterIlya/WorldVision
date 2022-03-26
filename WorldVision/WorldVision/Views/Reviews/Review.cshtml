@@ -1,10 +1,9 @@
 ﻿@model CompositeReviewModel
 @{
-
+    ViewData["Title"] = Localizer["PageName"];
     Layout = "_Layout";
     var btn = "like";
 }
-<link href="~/css/Carousel.css" rel="stylesheet">
 <style>
     .carousel {
         width: 800px;
@@ -22,15 +21,55 @@
         left: 0;
         min-height: 400px;
     }
+
     .specH1, .specBtn {
         float: left;
-    } 
+    }
+
+    blockquote {
+        margin: 0;
+        background: white;
+        border-top: 5px solid #EAF9F9;
+        border-bottom: 5px solid #EAF9F9;
+        color: #3A3C55;
+        padding: 30px 30px 30px 90px;
+        position: relative;
+        font-family: 'Lato', sans-serif;
+        font-weight: 300;
+    }
+
+        blockquote:before {
+            content: "\201C";
+            font-family: serif;
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            color: white;
+            background: #FB6652;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 50px;
+            line-height: 1.35;
+            text-align: center;
+        }
+
+        blockquote p {
+            margin: 0 0 16px;
+            font-size: 22px;
+            letter-spacing: .05em;
+            line-height: 1.4;
+        }
+
+        blockquote cite {
+            font-style: normal;
+        }
 </style>
 <body>
     <input id="email" value="@User.FindFirstValue(ClaimTypes.Email)" hidden />
     <div class="container">
         <div class="row">
-            <div class="col-8">
+            <div class="col-9">
                 <div class="row">
                     <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
                         <div class="carousel-inner">
@@ -52,11 +91,11 @@
                         </div>
                         <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Предыдущий</span>
+                            <span class="visually-hidden">@Localizer["Previous"]</span>
                         </button>
                         <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
                             <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Следующий</span>
+                            <span class="visually-hidden">@Localizer["Next"]</span>
                         </button>
                     </div>
                 </div>
@@ -82,12 +121,12 @@
                                 }
                             }
                         </div>
-                        <p class="text-black-50">@Model.Review.UpdateDate.ToShortDateString()      @Model.Review.UserName     Score: @Model.Review.AuthorScore Rating: @Model.Rating</p>
+                        <p class="text-black-50">@Model.Review.UpdateDate.ToShortDateString()      @Model.Review.UserName     @Localizer["Score"]: @Model.Review.AuthorScore @Localizer["Rating"]: @Model.Rating</p>
                     </div>
                 </div>
                 <div class="row">
                     <p class="text-secondary">
-                        @Model.Review.Content
+                        @Html.Raw(Model.Review.Content)
                     </p>
                 </div>
                 <hr />
@@ -95,13 +134,58 @@
                     <h5 style="float: left;">Tags</h5>
                     <p style="float: right;">@Model.Review.Tags</p>
                 </div>
+
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <hr />
+                    <h5>@Localizer["Leave comment"]</h5>
+                    <form id="form">
+                        <input asp-for="Comment.ReviewId" type="number" hidden value="@Model.Review.ReviewId" id="reviewId" />
+                        <div class="mb-3 row" hidden>
+                            <label class="col-sm-2 col-form-label">Email</label>
+                            <div class="col-sm-10">
+                                <input asp-for="Comment.Email" type="text" readonly class="form-control-plaintext w-50" name="Email" id="email" value="@User.FindFirstValue(ClaimTypes.Email)">
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-sm-2 col-form-label">@Localizer["Comment"]</label>
+                            <div class="col-sm-10 ">
+                                <textarea asp-for="Comment.Content" class="form-control w-50" required name="Content" id="content" rows="7"></textarea>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" type="submit">@Localizer["Publish"]</button>
+                    </form>
+                    <hr />
+                    <h5>@Localizer["Comments"]</h5>
+                    <div id="comments" style="margin-top: 10px">
+
+                        @if (Model.Comments.Count != 0)
+                        {
+                            foreach (var comment in Model.Comments)
+                            {
+                                <blockquote>
+                                    <p>@comment.Content</p>
+                                    <cite>@(comment.Name). @(comment.CreateDate)</cite>
+                                </blockquote>
+                            }
+                        }
+                        else
+                        {
+                    <h6 class="text-black-50" style="margin: auto; text-align: center">@Localizer["No comments"]</h6>
+                        }
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-light text-black-50" type="button" onclick="ShowMore()" id="showMore">@Localizer["Show More"]</button>
+                    </div>
+                }
+
             </div>
             <div class="col-3" style="margin-left: auto">
                 <table class="table">
                     <thead>
                         <tr style="text-align: center">
                             <th>
-                                <h2>Last reviews in this category</h2>
+                                <h2>@Localizer["Last reviews"]</h2>
                             </th>
                         </tr>
                     </thead>
@@ -132,6 +216,14 @@
         </div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-    <script>const btn = @Json.Serialize(btn);</script>
+    <script src="~/js/jquery.min.js"></script>
+    <script>
+        const btn = @Json.Serialize(btn);
+        let skip = 5;
+        let reviewId = document.getElementById('reviewId').value;
+    </script>
+    <script src="~/js/microsoft/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/js/push.js"></script>
     <script src="~/js/like.js"></script>
+    <script src="~/js/showMore.js"></script>
 </body>

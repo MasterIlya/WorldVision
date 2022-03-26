@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System.Linq;
 using System.Threading.Tasks;
 using WorldVision.Services.IServices;
 using WorldVision.Services.Models;
+using WorldVision.Hubs;
+using System;
 
 namespace WorldVision.Controllers
 {
@@ -15,14 +18,16 @@ namespace WorldVision.Controllers
         private readonly IUsersService _usersService;
         private readonly ICloudinaryService _cloudinaryService;
         private readonly IElasticSearchService _elasticSearchService;
+        private readonly IHubContext<CommentsHub> _hubContext;
 
         public ReviewsController(IReviewsService reviewsService, IUsersService usersService,
-            ICloudinaryService cloudinaryService, IElasticSearchService elasticSearchService)
+            ICloudinaryService cloudinaryService, IElasticSearchService elasticSearchService, IHubContext<CommentsHub> hubContext)
         {
             _reviewsService = reviewsService;
             _usersService = usersService;
             _cloudinaryService = cloudinaryService;
             _elasticSearchService = elasticSearchService;
+            _hubContext = hubContext;
         }
 
         [HttpGet]
@@ -156,9 +161,11 @@ namespace WorldVision.Controllers
         [HttpGet]
         public async Task<IActionResult> GetReview(int reviewId, string type, string currentEmail)
         {
+
             var model = await _reviewsService.GetReviewAsync(reviewId, type, currentEmail);
 
             return View("Review", model);
+
         }
 
         [AllowAnonymous]
@@ -209,6 +216,22 @@ namespace WorldVision.Controllers
             var models = await _reviewsService.GetReviewsInCategoryAsync(categoryId, currentPage);
 
             return View("Reviews", models);
+        }
+
+        [HttpPost]
+        public async Task CreateComment(CreateCommentModel model)
+        {
+            int commentId = await _reviewsService.CreateReviewCommentAsync(model);
+            var comment = await _reviewsService.GetReviewCommentAsync(commentId);
+            await _hubContext.Clients.All.SendAsync("Send", comment);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetMoreComments(int skip, int reviewId)
+        {
+            var comments = await _reviewsService.GetCommentsByReviewIdAsync(reviewId, skip);
+
+            return Json(comments);
         }
     }
 }

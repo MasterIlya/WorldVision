@@ -1,23 +1,24 @@
 ﻿@model PaginationReviewModel
 @{
-    ViewData["Title"] = "UserReviews";
+    ViewData["Title"] = Localizer["PageName"];
     Layout = "_Layout";
 
 }
 <body>
     <div class="container">
         <div>
-            <a asp-action="CreateReview" asp-controller="Reviews" asp-route-email="@Model.Email" class="btn btn-primary" style="margin-bottom: 10px">Create Review</a>
+            <a asp-action="CreateReview" asp-controller="Reviews" asp-route-email="@Model.Email"
+               class="btn btn-primary" style="margin-bottom: 10px">@Localizer["Create Review"]</a>
         </div>
         <table class="table table-success table-striped">
             <thead>
                 <tr style="text-align: center">
                     <th scope="col">#</th>
-                    <th scope="col">Title</th>
-                    <th scope="col">Review Type</th>
-                    <th scope="col">Author Score</th>
-                    <th scope="col">Create Date</th>
-                    <th scope="col">Action</th>
+                    <th scope="col">@Localizer["Title"]</th>
+                    <th scope="col">@Localizer["Review Type"]</th>
+                    <th scope="col">@Localizer["Author Score"]</th>
+                    <th scope="col">@Localizer["Create Date"]</th>
+                    <th scope="col">@Localizer["Actions"]</th>
                 </tr>
             </thead>
             <tbody style="text-align: center; ">
@@ -31,12 +32,12 @@
                         </td>
                         <td>@Model.Models[i].ReviewType</td>
                         <td>@Model.Models[i].AuthorScore</td>
-                        <td>@Model.Models[i].UpdateDate</td>
+                        <td>@Model.Models[i].CreateDate</td>
                         <td>
                             <div class="list-group list-group-horizontal" style="display: flex; justify-content: center;">
-                                <a asp-action="UpdateReview" asp-controller="Reviews" asp-route-reviewId="@Model.Models[i].ReviewId" asp-route-email="@Model.Email" class="list-group-item btn-sm">Update</a>
+                                <a asp-action="UpdateReview" asp-controller="Reviews" asp-route-reviewId="@Model.Models[i].ReviewId" asp-route-email="@Model.Email" class="list-group-item btn-sm">@Localizer["Update"]</a>
                                 <form asp-action="RemoveReview" asp-controller="Reviews" asp-route-reviewId="@Model.Models[i].ReviewId" asp-route-email="@Model.Email">
-                                    <button type="submit" class="list-group-item btn-sm">Delete</button>
+                                    <button type="submit" class="list-group-item btn-sm">@Localizer["Delete"]</button>
                                 </form>
                             </div>
                         </td>
@@ -52,14 +53,14 @@
             {
                 <li class="page-item disabled">
                     <a class="page-link" asp-action="GetUserReviews" asp-controller="reviews"
-                       asp-route-currentPage="@(Model.CurrentPage - 1)" aria-disabled="true" asp-route-email="@Model.Email">Previous</a>
+                       asp-route-currentPage="@(Model.CurrentPage - 1)" aria-disabled="true" asp-route-email="@Model.Email">@Localizer["Previous"]</a>
                 </li>
             }
             else
             {
                 <li class="page-item">
                     <a class="page-link" asp-action="GetUserReviews" asp-controller="reviews"
-                       asp-route-currentPage="@(Model.CurrentPage - 1)" aria-disabled="true" asp-route-email="@Model.Email">Previous</a>
+                       asp-route-currentPage="@(Model.CurrentPage - 1)" aria-disabled="true" asp-route-email="@Model.Email">@Localizer["Previous"]</a>
                 </li>
             }
             @for (int i = 0; i < Model.CountOfPages; i++)
@@ -73,14 +74,14 @@
             {
                 <li class="page-item disabled">
                     <a class="page-link" asp-action="GetUserReviews" asp-controller="reviews"
-                       asp-route-currentPage="@(Model.CurrentPage + 1)" asp-route-email="@Model.Email">Next</a>
+                       asp-route-currentPage="@(Model.CurrentPage + 1)" asp-route-email="@Model.Email">@Localizer["Next"]</a>
                 </li>
             }
             else
             {
                 <li class="page-item">
                     <a class="page-link" asp-action="GetUserReviews" asp-controller="reviews"
-                       asp-route-currentPage="@(Model.CurrentPage + 1)" asp-route-email="@Model.Email">Next</a>
+                       asp-route-currentPage="@(Model.CurrentPage + 1)" asp-route-email="@Model.Email">@Localizer["Next"]</a>
                 </li>
             }
         </ul>

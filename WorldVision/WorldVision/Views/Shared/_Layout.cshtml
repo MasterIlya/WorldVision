@@ -1,12 +1,23 @@
 ﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="~/css/bootstrap.min.css" rel="stylesheet">
+    @{
+        string theme = null;
+        httpContextAccessor.HttpContext.Request.Cookies.TryGetValue("theme", out theme);
+        if (theme == "dark")
+        {
+            <link id="linkTheme" href="~/css/bootstrap-dark.min.css" rel="stylesheet">
+        }
+        if (theme == "light" || theme == null)
+        {
+            <link id="linkTheme" href="~/css/bootstrap.min.css" rel="stylesheet">
+        }
+    }
+
     <link href="~/css/style.css" rel="stylesheet">
     <link rel="stylesheet" href="~/lib/dropzone/min/dropzone.min.css" type="text/css" />
     <title>@ViewBag.Title</title>
@@ -22,20 +33,20 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 fs-4">
                         <li class="nav-item">
-                            <a asp-controller="home" asp-action="index" class="nav-link">Main</a>
+                            <a asp-controller="home" asp-action="index" class="nav-link">@Localizer["Main"]</a>
                         </li>
                         <li class="nav-item">
-                            <a asp-controller="reviews" asp-action="getcategories" class="nav-link">Reviews</a>
+                            <a asp-controller="reviews" asp-action="getcategories" class="nav-link">@Localizer["Reviews"]</a>
                         </li>
                         <li class="nav-item">
-                            <a asp-controller="home" asp-action="about" class="nav-link">About</a>
+                            <a asp-controller="home" asp-action="about" class="nav-link">@Localizer["About"]</a>
                         </li>
                     </ul>
                     @using (Html.BeginForm("search", "reviews", FormMethod.Get))
                     {
                         <div class="d-flex" style="margin-right: 10px">
-                            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="search">
-                            <button type="submit" class="btn btn1">Search</button>
+                            <input class="form-control me-2" type="search" placeholder=@Localizer["Search"] aria-label="Search" name="search">
+                            <button type="submit" class="btn btn1">@Localizer["Search"]</button>
                         </div>
                     }
                     @if (User.Identity.IsAuthenticated)
@@ -48,12 +59,12 @@
                                             @User.FindFirstValue(ClaimTypes.Name)
                                         </button>
                                         <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                            <li><a class="dropdown-item" asp-action="GetUserReviews" asp-controller="Reviews" asp-route-email="@User.FindFirstValue(ClaimTypes.Email)">My Reviews</a></li>
+                                            <li><a class="dropdown-item" asp-action="GetUserReviews" asp-controller="Reviews" asp-route-email="@User.FindFirstValue(ClaimTypes.Email)">@Localizer["My Reviews"]</a></li>
                                             @if (User.IsInRole("Admin"))
                                             {
-                                                <li><a class="dropdown-item" asp-action="GetUsers" asp-controller="Users">Users</a></li>
+                                                <li><a class="dropdown-item" asp-action="GetUsers" asp-controller="Users">@Localizer["Users"]</a></li>
                                             }
-                                            <li><a class="dropdown-item" asp-action="logout" asp-controller="users">Logout</a></li>
+                                            <li><a class="dropdown-item" asp-action="logout" asp-controller="users">@Localizer["Logout"]</a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -64,7 +75,7 @@
                     {
                         <ul class="navbar-nav me-2">
                             <li class="nav-item">
-                                <a asp-controller="users" asp-action="authentication" class="btn btn-outline-primary">Login</a>
+                                <a asp-controller="users" asp-action="authentication" class="btn btn-outline-primary">@Localizer["Login"]</a>
                             </li>
                         </ul>
 
@@ -74,6 +85,7 @@
         </nav>
 
     </header>
+
     <div id="main">
         @RenderBody()
     </div>
@@ -84,22 +96,22 @@
                     <div class="col-xs-12 col-sm-6 col-md-3">
                         <div class="widget subscribe no-box">
                             <h5 class="widget-title">WorldVision<span></span></h5>
-                            <p>We are glad to welcome you to our website. Here you can find for yourself the best materials for entertainment and development.</p>
+                            <p>@Localizer["Description"]</p>
                         </div>
                     </div>
 
-                    <div class="col-xs-12 col-sm-6 col-md-3">
+                    <div class="col-xs-12 col-sm-6 col-md-2">
                         <div class="widget no-box">
-                            <h5 class="widget-title">Links<span></span></h5>
+                            <h5 class="widget-title">@Localizer["Links"]<span></span></h5>
                             <ul class="thumbnail-widget">
                                 <li>
-                                    <div class="thumb-content"><a asp-controller="home" asp-action="index">Main</a></div>
+                                    <div class="thumb-content"><a asp-controller="home" asp-action="index">@Localizer["Main"]</a></div>
                                 </li>
                                 <li>
-                                    <div class="thumb-content"><a asp-controller="reviews" asp-action="getcategories">Reviews</a></div>
+                                    <div class="thumb-content"><a asp-controller="reviews" asp-action="getcategories">@Localizer["Reviews"]</a></div>
                                 </li>
                                 <li>
-                                    <div class="thumb-content"><a asp-controller="home" asp-action="about">About</a></div>
+                                    <div class="thumb-content"><a asp-controller="home" asp-action="about">@Localizer["About"]</a></div>
                                 </li>
                             </ul>
                         </div>
@@ -109,30 +121,53 @@
                         <div class="widget no-box">
                             @if (User.Identity.IsAuthenticated)
                             {
-                                <h5 class="widget-title">Hello!<span></span></h5>
-                                <p>Write reviews, leave comments, rate other reviews, every opinion is important here.</p>
+                                <h5 class="widget-title">@Localizer["AuthH"]<span></span></h5>
+                                <p>@Localizer["AuthP"]</p>
                             }
                             else
                             {
-                                <h5 class="widget-title">Your reviews are waiting<span></span></h5>
-                                <p>Register on the site to write reviews and have a good time.</p>
-                                <a asp-controller="users" asp-action="registration" class="btn btn1" target="_blank">Regisration</a>
+                                <h5 class="widget-title">@Localizer["NoAuthH"]<span></span></h5>
+                                <p>@Localizer["NoAuthP"]</p>
+                                <a asp-controller="users" asp-action="registration" class="btn btn1" target="_blank">@Localizer["Regisration"]</a>
                             }
 
                         </div>
                     </div>
-
-                    <div class="col-xs-12 col-sm-6 col-md-3">
-
+                    <div class="col-xs-12 col-sm-6 col-md-2">
                         <div class="widget no-box">
-                            <h5 class="widget-title">Any questions?<span></span></h5>
+                            <h5 class="widget-title">@Localizer["Any questions"]<span></span></h5>
                             <p><a href="mailto:magic@gmail.ru" title="glorythemes">magic@gmail.ru</a></p>
                             <p><a href="mailto:magic@gmail.ru" title="glorythemes">magic@gmail.ru</a></p>
                             <p><a href="mailto:magic@gmail.ru" title="glorythemes">magic@gmail.ru</a></p>
                             <p><a href="mailto:magic@gmail.ru" title="glorythemes">magic@gmail.ru</a></p>
                         </div>
                     </div>
+                    <div class="col-xs-12 col-sm-6 col-md-2">
+                        <div class="widget no-box">
+                            @await Html.PartialAsync("_SelectLanguagePartial")
+                            <h5 class="widget-title">Theme</h5>
+                            <form method="post">
+                                @{ string nowTheme = null;
 
+                                    httpContextAccessor.HttpContext.Request.Cookies.TryGetValue("theme", out nowTheme);
+                                    if (nowTheme == "dark")
+                                    {
+                                        <div class="form-check form-switch">
+                                            <input id="Theme" class="form-check-input" checked type="checkbox" onchange='changeCSS()' ;>
+                                            <label class="form-check-label">On Dark Theme</label>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="form-check form-switch">
+                                            <input id="Theme" class="form-check-input" type="checkbox" onchange='changeCSS()' ;>
+                                            <label class="form-check-label">On Dark Theme</label>
+                                        </div>
+                                    }
+                                }
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -149,5 +184,6 @@
     </footer>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
     <script type="text/javascript" src="@Url.Content("~/js/bootstrap.bundle.min.js")"></script>
+    <script src="~/js/changeTheme.js"></script>
 </body>
 </html>

@@ -25,6 +25,8 @@ namespace WorldVision.Services.IServices
         public Task<List<PopularTagModel>> GetPopularTagsAsync();
         public Task<GeneralPageModel> GetGeneralPageModelAsync();
         public Task<PaginationReviewModel> GetReviewsInCategoryAsync(int categoryId, int currentPage);
-
+        public Task<int> CreateReviewCommentAsync(CreateCommentModel model);
+        public Task<ReviewCommentModel> GetReviewCommentAsync(int commentId);
+        public Task<List<ReviewCommentModel>> GetCommentsByReviewIdAsync(int reviewId, int skip);
     }
 }
