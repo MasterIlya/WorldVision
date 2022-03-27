@@ -38,6 +38,7 @@ function sendform(e) {
    
 hubConnection.on("Send", function (model) {
     skip++;
+
     let elem1 = document.createElement("blockquote");
     let elem2 = document.createElement("p");
     let elem3 = document.createElement("cite");
@@ -48,6 +49,8 @@ hubConnection.on("Send", function (model) {
     elem1.appendChild(elem3)
     let firstElem = document.getElementById("comments").firstChild;
     document.getElementById("comments").insertBefore(elem1, firstElem);
+    let elem = document.getElementById("noComment");
+    elem.remove()
  
 });
  

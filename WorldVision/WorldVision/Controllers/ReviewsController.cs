@@ -2,14 +2,14 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
+using WorldVision.Commons.Enums;
+using WorldVision.Hubs;
 using WorldVision.Services.IServices;
 using WorldVision.Services.Models;
-using WorldVision.Hubs;
-using System;
-using System.Collections.Generic;
-using System.Text.Json;
 
 namespace WorldVision.Controllers
 {
@@ -95,6 +95,8 @@ namespace WorldVision.Controllers
             else
             {
                 model.Types = await _reviewsService.GetAllReviewTypesAsync();
+                model.Email = email;
+                model.Tags = await _reviewsService.GetAllTags();
 
                 return View(model);
             }
@@ -116,11 +118,13 @@ namespace WorldVision.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateReview(CompositeCreateReviewModel model, string email, string pageId)
+        public async Task<IActionResult> UpdateReview(CompositeCreateReviewModel model, string email, string pageId, string tagsJson)
         {
             if (ModelState.IsValid)
             {
                 var user = await _usersService.GetUserByEmailAsync(email);
+
+                model.ReviewModel.Tags = JsonSerializer.Deserialize<List<TagModel>>(tagsJson);
 
                 model.ReviewModel.UserId = user.UserId;
 
@@ -141,6 +145,8 @@ namespace WorldVision.Controllers
             {
                 model.Types = await _reviewsService.GetAllReviewTypesAsync();
                 model.Images = await _reviewsService.GetImagesAsync(model.ReviewModel.ReviewId);
+                model.Tags = await _reviewsService.GetAllTags();
+                model.Email = email;
 
                 return View(model);
             }
@@ -155,9 +161,9 @@ namespace WorldVision.Controllers
             return RedirectToAction("GetUserReviews", new { email });
         }
 
-        public async Task<IActionResult> GetUserReviews(string email, int currentPage)
+        public async Task<IActionResult> GetUserReviews(string email, int currentPage, FilterTypes filter = FilterTypes.Date, SortTypes sort = SortTypes.Descending)
         {
-            var reviews = await _reviewsService.GetUserReviewsAsync(currentPage, email);
+            var reviews = await _reviewsService.GetUserReviewsAsync(currentPage, email, filter, sort);
 
             reviews.Email = email;
 
@@ -216,9 +222,11 @@ namespace WorldVision.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> GetReviews(int categoryId, int currentPage)
+        public async Task<IActionResult> GetReviews(int categoryId, int currentPage, FilterTypes filter = FilterTypes.Date, SortTypes sort = SortTypes.Descending)
         {
-            var models = await _reviewsService.GetReviewsInCategoryAsync(categoryId, currentPage);
+            var models = await _reviewsService.GetReviewsInCategoryAsync(categoryId, currentPage, filter, sort);
+
+            models.CategoryId = categoryId;
 
             return View("Reviews", models);
         }

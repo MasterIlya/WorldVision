@@ -22,11 +22,11 @@
                 <div class="form-fields">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <div class="form-field">
-                        <input type="email" asp-for="Email" placeholder=@Localizer["Email"]>
+                        <input type="email" asp-for="Email" placeholder=@Localizer["Email"] required>
                         <span asp-validation-for="Email" class="text-danger"></span>
                     </div>
                     <div class="form-field">
-                        <input type="password" asp-for="Password" placeholder=@Localizer["Password"]>
+                        <input type="password" asp-for="Password" placeholder=@Localizer["Password"] required>
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
                 </div>
@@ -36,11 +36,9 @@
                 <div>
                     <a href='@Url.Action("Registration", "Users")'>@Localizer["Registration"]</a>
                 </div>
-                <div>
-                    <a href='@Url.Action("GoogleLogin", "Users")'>Зайти с помощью Google</a>
-                </div>
-                <div>
-                    <a href='@Url.Action("FacebookLogin", "Users")'>Зайти с помощью Facebook</a>
+                <div class="btn-group d-grid gap-2 d-md-flex">
+                    <a href='@Url.Action("GoogleLogin", "Users")' class="btn"><img width="35" height="35" src="https://res.cloudinary.com/dtomjloda/image/upload/v1648387124/Apps_to_Use_on_your_shopify_Store_Google_kaklrf.png"></a>
+                    <a href='@Url.Action("FacebookLogin", "Users")' class="btn"><img width="40" height="40" src="https://res.cloudinary.com/dtomjloda/image/upload/v1648387124/5cd48fc5ad951_kdztvg.png"></a>
                 </div>
             </form>
         </div>

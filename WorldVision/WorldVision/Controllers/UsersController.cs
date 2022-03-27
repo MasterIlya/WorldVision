@@ -94,6 +94,14 @@ namespace WorldVision.Controllers
                 await _usersService.CreateAsync(socialNetworkUser);
             }
 
+            var user = await _usersService.GetUserByEmailAsync(socialNetworkUser.Email);
+
+            if(user.State == StateTypes.Blocked)
+            {
+                ModelState.AddModelError("", "Incorrect login and/or password, or you are blocked");
+                return RedirectToAction("Login", "Users");
+            }
+
             return RedirectToAction("Index", "Home");
         }
 

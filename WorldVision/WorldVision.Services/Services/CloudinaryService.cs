@@ -1,12 +1,12 @@
-﻿using System;
+﻿using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using Microsoft.Extensions.Caching.Memory;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using CloudinaryDotNet;
-using CloudinaryDotNet.Actions;
-using Microsoft.Extensions.Caching.Memory;
+using WorldVision.Services.Configuration;
 using WorldVision.Services.IServices;
 using WorldVision.Services.Models;
 
@@ -14,15 +14,13 @@ namespace WorldVision.Services.Services
 {
     public class CloudinaryService : ICloudinaryService
     {
-        private const string key = "168169978815345";
-        private const string secret = "L1Z4Kfp1UAkp0lwNyGjnVnfxiMY";
-        private const string name = "dtomjloda";
         private readonly IMemoryCache cache;
+        private readonly ICloudinaryCredentials _cloudinaryCredentials;
 
-
-        public CloudinaryService(IMemoryCache memoryCache)
+        public CloudinaryService(IMemoryCache memoryCache, ICloudinaryCredentials cloudinaryCredentials)
         {
             cache = memoryCache;
+            _cloudinaryCredentials = cloudinaryCredentials;
         }
 
         public void AddToCache(string url, long imgSize, string fileName, string email, string pageId)
@@ -34,7 +32,7 @@ namespace WorldVision.Services.Services
                 ImageURL = url,
                 ImageSize = imgSize
             };
-            if(GetFromCache(pageId, email) == null)
+            if (GetFromCache(pageId, email) == null)
             {
                 List<ReviewImageModel> models = new List<ReviewImageModel>();
                 models.Add(model);
@@ -63,20 +61,20 @@ namespace WorldVision.Services.Services
 
         public async Task<ImageUploadResult> LoadAsync(string fileName, Stream stream)
         {
-            Account account = new Account(name, key, secret);
+            Account account = new Account(_cloudinaryCredentials.Name, _cloudinaryCredentials.Key, _cloudinaryCredentials.Secret);
             var cloudinary = new Cloudinary(account);
             var uploadParams = new ImageUploadParams()
             {
                 File = new FileDescription(fileName, stream),
             };
-            
+
             return await cloudinary.UploadAsync(uploadParams);
 
         }
 
         public async Task DeleteAsync(string url)
         {
-            Account account = new Account(name, key, secret);
+            Account account = new Account(_cloudinaryCredentials.Name, _cloudinaryCredentials.Key, _cloudinaryCredentials.Secret);
             var cloudinary = new Cloudinary(account);
 
             var publicId = url.Split(new char[] { '/' })
@@ -91,7 +89,7 @@ namespace WorldVision.Services.Services
 
         public async Task DeleteImageOnUpdateAsync(string filename)
         {
-            Account account = new Account(name, key, secret);
+            Account account = new Account(_cloudinaryCredentials.Name, _cloudinaryCredentials.Key, _cloudinaryCredentials.Secret);
             var cloudinary = new Cloudinary(account);
 
             var publicId = filename.Split(new char[] { '.' }).First();

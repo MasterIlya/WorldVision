@@ -129,6 +129,9 @@
   <data name="AuthP" xml:space="preserve">
     <value>Пишите отзывы, оставляйте комментарии, оценивайте другие обзоры, здесь важно каждое мнение.</value>
   </data>
+  <data name="DarkTheme" xml:space="preserve">
+    <value>Включить Темную Тему</value>
+  </data>
   <data name="Description" xml:space="preserve">
     <value>Мы рады приветствовать Вас на нашем сайте. Здесь вы можете найти для себя лучшие материалы для развлечения и развития.</value>
   </data>
@@ -161,6 +164,9 @@
   </data>
   <data name="Search" xml:space="preserve">
     <value>Поиск</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>Тема</value>
   </data>
   <data name="Users" xml:space="preserve">
     <value>Пользователи</value>

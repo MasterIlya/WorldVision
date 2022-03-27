@@ -129,6 +129,9 @@
   <data name="AuthP" xml:space="preserve">
     <value>Write reviews, leave comments, rate other reviews, every opinion is important here.</value>
   </data>
+  <data name="DarkTheme" xml:space="preserve">
+    <value>ON Dark Theme</value>
+  </data>
   <data name="Description" xml:space="preserve">
     <value>We are glad to welcome you to our website. Here you can find for yourself the best materials for entertainment and development.</value>
   </data>
@@ -161,6 +164,9 @@
   </data>
   <data name="Search" xml:space="preserve">
     <value>Search</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>Theme</value>
   </data>
   <data name="Users" xml:space="preserve">
     <value>Users</value>

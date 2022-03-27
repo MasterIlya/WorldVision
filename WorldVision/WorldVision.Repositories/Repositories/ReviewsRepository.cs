@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WorldVision.Commons.Enums;
 using WorldVision.Repositories.Interfaces;
 using WorldVision.Repositories.Items;
 
@@ -14,11 +15,28 @@ namespace WorldVision.Repositories.Repositories
         {
         }
 
-        public async Task<List<ReviewItem>> GetAsync(int skip, int take, int userId)
+        public async Task<List<ReviewItem>> GetAsync(int skip, int take, int userId, SortTypes sort, FilterTypes filter)
         {
-            return await GetItems()
-                .Where(x => x.UserId == userId)
-                .OrderByDescending(x => x.CreateDate)
+            var result = GetItems().Where(x => x.UserId == userId);
+
+            if (filter == FilterTypes.Date && sort == SortTypes.Descending)
+            {
+                result = result.OrderByDescending(x => x.CreateDate);
+            }
+            else if (filter == FilterTypes.Date && sort == SortTypes.Ascending)
+            {
+                result = result.OrderBy(x => x.CreateDate);
+            }
+            else if (filter == FilterTypes.Assessment && sort == SortTypes.Descending)
+            {
+                result = result.OrderByDescending(x => x.AuthorScore);
+            }
+            else if (filter == FilterTypes.Assessment && sort == SortTypes.Descending)
+            {
+                result = result.OrderBy(x => x.AuthorScore);
+            }
+            return await result
+                .Skip(skip)
                 .Take(take)
                 .ToListAsync();
         }
@@ -42,6 +60,31 @@ namespace WorldVision.Repositories.Repositories
                 .ToListAsync();
         }
 
+        public async Task<List<ReviewItem>> GetReviewsInCategory(int categoryId, int skip, int take, SortTypes sort, FilterTypes filter)
+        {
+            var result = GetItems().Where(x => x.ReviewTypeId == categoryId);
+
+            if (filter == FilterTypes.Date && sort == SortTypes.Descending)
+            {
+                result = result.OrderByDescending(x => x.CreateDate);
+            }
+            else if (filter == FilterTypes.Date && sort == SortTypes.Ascending)
+            {
+                result = result.OrderBy(x => x.CreateDate);
+            }
+            else if (filter == FilterTypes.Assessment && sort == SortTypes.Descending)
+            {
+                result = result.OrderByDescending(x => x.AuthorScore);
+            }
+            else if (filter == FilterTypes.Assessment && sort == SortTypes.Descending)
+            {
+                result = result.OrderBy(x => x.AuthorScore);
+            }
+            return await result
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+        }
 
         public async Task<int> GetCountAsync(int userId)
         {

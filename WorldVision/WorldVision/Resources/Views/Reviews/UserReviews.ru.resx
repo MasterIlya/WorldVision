@@ -120,6 +120,12 @@
   <data name="Actions" xml:space="preserve">
     <value>Действия</value>
   </data>
+  <data name="AscendingAssessment" xml:space="preserve">
+    <value>Оценка по возрастанию</value>
+  </data>
+  <data name="AscendingDate" xml:space="preserve">
+    <value>Дата по возрастанию</value>
+  </data>
   <data name="Author Score" xml:space="preserve">
     <value>Оценка автора</value>
   </data>
@@ -131,6 +137,15 @@
   </data>
   <data name="Delete" xml:space="preserve">
     <value>Удалить</value>
+  </data>
+  <data name="DescendingAssessment" xml:space="preserve">
+    <value>Оценка по убыванию</value>
+  </data>
+  <data name="DescendingDate" xml:space="preserve">
+    <value>Дата по убыванию</value>
+  </data>
+  <data name="Filter" xml:space="preserve">
+    <value>Фильтр:</value>
   </data>
   <data name="Next" xml:space="preserve">
     <value>Следующая</value>

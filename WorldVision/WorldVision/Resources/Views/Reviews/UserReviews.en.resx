@@ -120,6 +120,12 @@
   <data name="Actions" xml:space="preserve">
     <value>Actions</value>
   </data>
+  <data name="AscendingAssessment" xml:space="preserve">
+    <value>Ascending Assessment</value>
+  </data>
+  <data name="AscendingDate" xml:space="preserve">
+    <value>Ascending Date</value>
+  </data>
   <data name="Author Score" xml:space="preserve">
     <value>Author Score</value>
   </data>
@@ -131,6 +137,15 @@
   </data>
   <data name="Delete" xml:space="preserve">
     <value>Delete</value>
+  </data>
+  <data name="DescendingAssessment" xml:space="preserve">
+    <value>Descending Assessment</value>
+  </data>
+  <data name="DescendingDate" xml:space="preserve">
+    <value>Descending Date</value>
+  </data>
+  <data name="Filter" xml:space="preserve">
+    <value>Filter:</value>
   </data>
   <data name="Next" xml:space="preserve">
     <value>Next</value>

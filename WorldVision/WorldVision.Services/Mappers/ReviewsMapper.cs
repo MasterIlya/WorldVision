@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using WorldVision.Commons.Enums;
 using WorldVision.Repositories.Items;
 using WorldVision.Services.Models;
 
@@ -87,6 +88,19 @@ namespace WorldVision.Services.Mappers
                 CreateDate = item.CreateDate.ToLocalTime(),
                 UpdateDate = item.UpdateDate.ToLocalTime(),
                 Rating = item.LikeCount.GetValueOrDefault()
+            };
+        }
+
+        public static PaginationReviewModel Map(List<ReviewModel> reviews, int countOfPages, int currentPage, FilterTypes filter, SortTypes sort)
+        {
+            return new PaginationReviewModel
+            {
+                Models = reviews,
+                CountOfPages = countOfPages,
+                CurrentPage = currentPage,
+                Filter = filter,
+                Sort = sort,
+                FilterName = Enum.GetName(typeof(SortTypes), sort) + Enum.GetName(typeof(FilterTypes), filter)
             };
         }
 
@@ -183,7 +197,7 @@ namespace WorldVision.Services.Mappers
         }
 
         public static CompositeReviewModel Map(ReviewModel review, List<ReviewImageModel> images, List<ReviewModel> lastReviews,
-            List<ReviewCommentModel> comments, ReviewLikeModel currentUserLike = null)
+            List<ReviewCommentModel> comments, int rating, ReviewLikeModel currentUserLike = null)
         {
             return new CompositeReviewModel
             {
@@ -191,7 +205,8 @@ namespace WorldVision.Services.Mappers
                 Images = images,
                 LastReviewsInCategory = lastReviews,
                 CurrentUserLike = currentUserLike,
-                Comments = comments
+                Comments = comments,
+                Rating = rating
             };
         }
 

@@ -19,7 +19,7 @@
       asp-route-returnUrl="@Context.Request.Path"
       method="post">
 
-    <h5 class="widget-title">Language:<span></span></h5>
+    <h5 class="widget-title">@Localizer["Language"]<span></span></h5>
     <p><select class="form-select form-select-sm w-50" name="culture" onchange="this.form.submit();"
             asp-for="@requestCulture.RequestCulture.UICulture.Name"
             asp-items="cultureItems"></select></p>

@@ -117,16 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="h1" xml:space="preserve">
-    <value>What is WorldVision?</value>
-  </data>
-  <data name="p1" xml:space="preserve">
-    <value>WorldVision</value>
-  </data>
-  <data name="p2" xml:space="preserve">
-    <value>is an website with which you can find for yourself what to read, what to watch, what to play, etc., based on the opinions of other users.</value>
-  </data>
-  <data name="PageName" xml:space="preserve">
-    <value>About</value>
+  <data name="Language" xml:space="preserve">
+    <value>Язык:</value>
   </data>
 </root>

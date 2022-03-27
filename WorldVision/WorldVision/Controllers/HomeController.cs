@@ -34,7 +34,7 @@ namespace WorldVision.Controllers
                 new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
             );
 
-            return LocalRedirect(returnUrl);
+            return RedirectToAction("Index", "Home");
         }
         [HttpPost]
         public IActionResult SetTheme(string data)

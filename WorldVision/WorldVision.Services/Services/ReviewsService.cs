@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WorldVision.Commons.Enums;
 using WorldVision.Repositories.Interfaces;
 using WorldVision.Services.IServices;
 using WorldVision.Services.Mappers;
@@ -94,7 +95,7 @@ namespace WorldVision.Services.Services
             return review;
         }
 
-        public async Task<PaginationReviewModel> GetUserReviewsAsync(int currentPage, string email)
+        public async Task<PaginationReviewModel> GetUserReviewsAsync(int currentPage, string email, FilterTypes filter, SortTypes sort)
         {
             if (currentPage == 0)
             {
@@ -107,7 +108,7 @@ namespace WorldVision.Services.Services
             var user = await _usersRepository.GetByEmailAsync(email);
             var fullName = $"{user.FName} {user.LName}";
 
-            var items = await _reviewsRepository.GetAsync(skip, take, user.UserId);
+            var items = await _reviewsRepository.GetAsync(skip, take, user.UserId, sort, filter);
             var typeItems = await _reviewTypesRepository.GetAllAsync();
             Dictionary<int, List<Repositories.Items.ReviewTagItem>> tags = new Dictionary<int, List<Repositories.Items.ReviewTagItem>>();
             Dictionary<int, int> ratings = new Dictionary<int, int>();
@@ -125,7 +126,7 @@ namespace WorldVision.Services.Services
 
             var countOfPages = Convert.ToInt32(Math.Ceiling((double)elementsCount / take));
 
-            var result = ReviewsMapper.Map(modelsList, countOfPages, currentPage);
+            var result = ReviewsMapper.Map(modelsList, countOfPages, currentPage, filter, sort);
 
             return result;
         }
@@ -182,7 +183,7 @@ namespace WorldVision.Services.Services
             return models;
         }
 
-        public async Task<PaginationReviewModel> GetReviewsInCategoryAsync(int categoryId, int currentPage)
+        public async Task<PaginationReviewModel> GetReviewsInCategoryAsync(int categoryId, int currentPage, FilterTypes filter, SortTypes sort)
         {
             if (currentPage == 0)
             {
@@ -191,7 +192,7 @@ namespace WorldVision.Services.Services
             var take = DefaultReviewsCount;
             var skip = (currentPage - 1) * DefaultReviewsCount;
 
-            var items = await _reviewsRepository.GetReviewsInCategory(categoryId, skip, take);
+            var items = await _reviewsRepository.GetReviewsInCategory(categoryId, skip, take, sort, filter);
 
             var typeItems = await _reviewTypesRepository.GetAllAsync();
 
@@ -207,7 +208,7 @@ namespace WorldVision.Services.Services
             var elementsCount = await _reviewsRepository.GetCountInCategoryAsync(categoryId);
             var countOfPages = Convert.ToInt32(Math.Ceiling((double)elementsCount / take));
 
-            var models = ReviewsMapper.Map(reviews, countOfPages, currentPage);
+            var models = ReviewsMapper.Map(reviews, countOfPages, currentPage, filter, sort);
 
             return models;
         }
@@ -244,7 +245,7 @@ namespace WorldVision.Services.Services
             var lastReviews = await GetReviewsInCategoryAsync(typeId);
             var comments = commentItems.Select(x => ReviewsMapper.Map(x, usersWithComments.FirstOrDefault(x => x.UserId == x.UserId))).ToList();
 
-            var compositeModel = ReviewsMapper.Map(review, images, lastReviews, comments);
+            var compositeModel = ReviewsMapper.Map(review, images, lastReviews, comments, rating);
 
             return compositeModel;
         }
@@ -267,10 +268,10 @@ namespace WorldVision.Services.Services
             var review = ReviewsMapper.Map(reviewItem, types, fullName, tags, rating);
             var images = await GetImagesAsync(reviewId);
             var lastReviews = await GetReviewsInCategoryAsync(typeId);
-            var currentUserLike = await GetLikeCurrentUserAsync(currentUser.UserId);
+            var currentUserLike = await GetLikeCurrentUserAsync(currentUser.UserId, reviewId);
             var comments = commentItems.Select(x => ReviewsMapper.Map(x, usersWithComments.FirstOrDefault(x => x.UserId == x.UserId))).ToList();
 
-            var compositeModel = ReviewsMapper.Map(review, images, lastReviews, comments, currentUserLike);
+            var compositeModel = ReviewsMapper.Map(review, images, lastReviews, comments, rating, currentUserLike);
 
             return compositeModel;
         }
@@ -286,7 +287,7 @@ namespace WorldVision.Services.Services
         public async Task RemoveLikeAsync(int reviewId, string email)
         {
             var user = await _usersRepository.GetByEmailAsync(email);
-            var item = await _reviewLikesRepository.GetByUserIdAsync(user.UserId);
+            var item = await _reviewLikesRepository.GetByUserIdAsync(user.UserId, reviewId);
 
             await _reviewLikesRepository.RemoveAsync(item);
         }
@@ -296,9 +297,9 @@ namespace WorldVision.Services.Services
             return await _reviewLikesRepository.GetReviewLikeCountAsync(reviewId);
         }
 
-        public async Task<ReviewLikeModel> GetLikeCurrentUserAsync(int userId)
+        public async Task<ReviewLikeModel> GetLikeCurrentUserAsync(int userId, int reviewId)
         {
-            var item = await _reviewLikesRepository.GetByUserIdAsync(userId);
+            var item = await _reviewLikesRepository.GetByUserIdAsync(userId, reviewId);
 
             var model = ReviewsMapper.Map(item);
 

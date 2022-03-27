@@ -10,14 +10,15 @@ using WorldVision.Services.Services;
 using Elasticsearch.Net;
 using Nest;
 using Microsoft.AspNetCore.Http;
+using WorldVision.Services.Configuration;
 
 namespace WorldVision
 {
     internal class DependencyInjection
     {
-        private readonly ApplicationSettings _applicationSettings;
+        private readonly IApplicationSettings _applicationSettings;
         private readonly IServiceCollection _container;
-        public DependencyInjection(ApplicationSettings applicationSetting, IServiceCollection container)
+        public DependencyInjection(IApplicationSettings applicationSetting, IServiceCollection container)
         {
             _applicationSettings = applicationSetting;
             _container = container;
@@ -26,6 +27,7 @@ namespace WorldVision
         internal void Init()
         {
             _container.AddSingleton(typeof(IRepositoryContext), new RepositoryContext(_applicationSettings.ConnectionString));
+            _container.AddSingleton(typeof(ICloudinaryCredentials), _applicationSettings.CloudinaryCredentials);
 
             RegisterSingletons(typeof(UsersService), "Service");
             RegisterSingletons(typeof(UsersRepository), "Repository");

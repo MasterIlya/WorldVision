@@ -5,6 +5,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using WorldVision.Configuration;
+using WorldVision.Hubs;
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.AspNetCore.Http;
 
 namespace WorldVision
 {
@@ -13,8 +18,13 @@ namespace WorldVision
 
         public void ConfigureServices(IServiceCollection services)
         {
+            var builder = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
+                .AddUserSecrets("3ecc3019-52f9-4f29-966b-33c32be15556")
+                .Build();
+            var appSettings = new ApplicationSettings();
 
-            services.AddMvc();
+            appSettings.Init(builder);
             services.AddHttpContextAccessor();
             services.AddAuthentication(options =>
             {
@@ -27,28 +37,43 @@ namespace WorldVision
                 })
                 .AddGoogle(options =>
                 {
-                    options.ClientId = "xxx";
-                    options.ClientSecret = "xxx";
+                    options.ClientId = appSettings.GoogleCredentials.ClientId;
+                    options.ClientSecret = appSettings.GoogleCredentials.ClientSecret;
                 })
                 .AddFacebook(options =>
                 {
-                    options.AppId = "xxx";
-                    options.AppSecret = "xxx";
+                    options.AppId = appSettings.FacebookCredentials.AppId;
+                    options.AppSecret = appSettings.FacebookCredentials.AppSecret;
                 });
             services.AddAuthorization();
-            services.AddControllersWithViews();
+            services.AddSignalR();
+            services.AddLocalization(options => options.ResourcesPath = "Resources");
+            services.AddControllersWithViews()
+                .AddDataAnnotationsLocalization()
+                .AddViewLocalization();
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                var supportedCultures = new[]
+                {
+                    new CultureInfo("en"),
+                    new CultureInfo("ru")
+                };
 
-            var builder = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
-                .Build();
-            var appSettings = new ApplicationSettings();
-            appSettings.Init(builder);
+                options.DefaultRequestCulture = new RequestCulture("en");
+                options.SupportedCultures = supportedCultures;
+                options.SupportedUICultures = supportedCultures;
+            });
+            services.AddMvc();
+            services.AddControllersWithViews();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             new DependencyInjection(appSettings, services).Init();
         }
 
         public void Configure(IApplicationBuilder app, ILogger<Startup> logger)
         {
+
+            app.UseRequestLocalization();
             app.UseRouting();
             app.UseStaticFiles();
             app.UseAuthentication();
@@ -59,6 +84,7 @@ namespace WorldVision
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapHub<CommentsHub>("/comments");
             });
         }
     }
