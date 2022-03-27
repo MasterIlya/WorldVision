@@ -31,7 +31,8 @@
                                 @if (User.Identity.IsAuthenticated)
                                 {
                                     <a class="link-dark" asp-action="getreview" asp-controller="reviews"
-                                       asp-route-type="@lastReview.ReviewType" asp-route-reviewId="@lastReview.ReviewId">@lastReview.Title</a>
+                                       asp-route-type="@lastReview.ReviewType" asp-route-reviewId="@lastReview.ReviewId"
+                                       asp-route-currentEmail="@User.FindFirstValue(ClaimTypes.Email)">@lastReview.Title</a>
                                 }
                                 else
                                 {

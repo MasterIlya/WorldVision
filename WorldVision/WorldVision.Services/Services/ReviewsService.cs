@@ -45,10 +45,10 @@ namespace WorldVision.Services.Services
         {
             var item = ReviewsMapper.Map(model.ReviewModel);
             await _reviewsRepository.CreateAsync(item);
-            var tags = model.ReviewModel.Tags.Split(", ");
+            var tags = model.ReviewModel.Tags;
             foreach (var tag in tags)
             {
-                var tagItem = ReviewsMapper.Map(tag, item.ReviewId);
+                var tagItem = ReviewsMapper.Map(tag.Value, item.ReviewId);
                 await _reviewTagsRepository.CreateAsync(tagItem);
             }
             return item.ReviewId;
@@ -62,10 +62,10 @@ namespace WorldVision.Services.Services
             {
                 await _reviewTagsRepository.RemoveAsync(tag);
             }
-            var newTags = model.ReviewModel.Tags.Split(", ");
+            var newTags = model.ReviewModel.Tags;
             foreach (var tag in newTags)
             {
-                var tagItem = ReviewsMapper.Map(tag, item.ReviewId);
+                var tagItem = ReviewsMapper.Map(tag.Value, item.ReviewId);
                 await _reviewTagsRepository.CreateAsync(tagItem);
             }
             var newItem = ReviewsMapper.UpdateMap(item, model.ReviewModel);
@@ -87,8 +87,9 @@ namespace WorldVision.Services.Services
         public async Task<CreateReviewModel> GetReviewAsyncForUpdate(int reviewId)
         {
             var item = await _reviewsRepository.GetAsync(reviewId);
+            var tags = await _reviewTagsRepository.GetReviewTagsAsync(reviewId);
 
-            var review = ReviewsMapper.Map(item);
+            var review = ReviewsMapper.Map(item, tags);
 
             return review;
         }
@@ -366,6 +367,17 @@ namespace WorldVision.Services.Services
             var comments = commentItems.Select(x => ReviewsMapper.Map(x, usersWithComments.FirstOrDefault(x => x.UserId == x.UserId))).ToList();
 
             return comments;
+        }
+
+        public async Task<List<TagModel>> GetAllTags()
+        {
+            var items = await _reviewTagsRepository.GetAllTags();
+
+            var tagsTostring = items.Select(x => x.Tag).Distinct().ToList();
+
+            var tags = tagsTostring.Select(x => ReviewsMapper.Map(x)).ToList();
+
+            return tags;
         }
     }
 }

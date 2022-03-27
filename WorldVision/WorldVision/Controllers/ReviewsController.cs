@@ -8,6 +8,8 @@ using WorldVision.Services.IServices;
 using WorldVision.Services.Models;
 using WorldVision.Hubs;
 using System;
+using System.Collections.Generic;
+using System.Text.Json;
 
 namespace WorldVision.Controllers
 {
@@ -36,7 +38,8 @@ namespace WorldVision.Controllers
             var model = new CompositeCreateReviewModel
             {
                 Types = await _reviewsService.GetAllReviewTypesAsync(),
-                Email = email
+                Email = email,
+                Tags = await _reviewsService.GetAllTags()
             };
 
             return View(model);
@@ -69,11 +72,13 @@ namespace WorldVision.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateReview(CompositeCreateReviewModel model, string email, string pageId)
+        public async Task<IActionResult> CreateReview(CompositeCreateReviewModel model, string email, string pageId, string tagsJson)
         {
             if (ModelState.IsValid)
             {
                 var user = await _usersService.GetUserByEmailAsync(email);
+
+                model.ReviewModel.Tags = JsonSerializer.Deserialize<List<TagModel>>(tagsJson);
 
                 model.ReviewModel.UserId = user.UserId;
 
@@ -103,7 +108,8 @@ namespace WorldVision.Controllers
                 ReviewModel = await _reviewsService.GetReviewAsyncForUpdate(reviewId),
                 Types = await _reviewsService.GetAllReviewTypesAsync(),
                 Images = await _reviewsService.GetImagesAsync(reviewId),
-                Email = email
+                Email = email,
+                Tags = await _reviewsService.GetAllTags()
             };
 
             return View("CreateReview", model);
@@ -161,7 +167,6 @@ namespace WorldVision.Controllers
         [HttpGet]
         public async Task<IActionResult> GetReview(int reviewId, string type, string currentEmail)
         {
-
             var model = await _reviewsService.GetReviewAsync(reviewId, type, currentEmail);
 
             return View("Review", model);

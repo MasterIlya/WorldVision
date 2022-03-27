@@ -28,5 +28,6 @@ namespace WorldVision.Services.IServices
         public Task<int> CreateReviewCommentAsync(CreateCommentModel model);
         public Task<ReviewCommentModel> GetReviewCommentAsync(int commentId);
         public Task<List<ReviewCommentModel>> GetCommentsByReviewIdAsync(int reviewId, int skip);
+        public Task<List<TagModel>> GetAllTags();
     }
 }

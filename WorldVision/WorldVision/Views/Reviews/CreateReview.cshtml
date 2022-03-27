@@ -24,6 +24,7 @@
 }
 
 <link href="~/lib/Trumbowyg-main/dist/ui/trumbowyg.min.css" rel="stylesheet" />
+<link href="https://unpkg.com/@@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css" />
 <div class="container">
     <form id="form2" name="form2" asp-action="@msg" asp-controller="Reviews"
           asp-route-email="@Model.Email" asp-route-pageId="@pageId"
@@ -55,7 +56,7 @@
         </div>
         <div class="mb-3">
             <label class="form-label">@Localizer["Tags"]</label>
-            <input type="text" asp-for="ReviewModel.Tags" class="form-control" placeholder=@Localizer["Tags"]>
+            <input name='TagsJson' type="text" class="form-control" placeholder=@Localizer["Tags"]>
             <span asp-validation-for="ReviewModel.Tags" class="text-danger"></span>
         </div>
         <div class="mb-3">
@@ -95,6 +96,43 @@
 <script src="~/js/Update.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="~/lib/Trumbowyg-main/dist/trumbowyg.js"></script>
+<script src="https://unpkg.com/@@yaireo/tagify"></script>
+<script src="https://unpkg.com/@@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
+@if (Model.ReviewModel != null)
+{
 <script>
-    $('#content').trumbowyg();
+        $('#content').trumbowyg();
+        let tags = @Json.Serialize(Model.ReviewModel.Tags);
+        var input = document.querySelector('input[name=TagsJson]');
+        new Tagify(input, {
+            whitelist: @Json.Serialize(Model.Tags),
+            dropdown: {
+                classname: "color-blue",
+                enabled: 0,              // show the dropdown immediately on focus
+                maxItems: 5,
+                position: "text",         // place the dropdown near the typed text
+                closeOnSelect: false,          // keep the dropdown open after selecting a suggestion
+                highlightFirst: true
+            }
+        }).addTags(tags);
 </script>
+}
+else
+{
+    <script>
+        $('#content').trumbowyg();
+        var input = document.querySelector('input[name=TagsJson]');
+        new Tagify(input, {
+            whitelist: @Json.Serialize(Model.Tags),
+            dropdown: {
+                classname: "color-blue",
+                enabled: 0,              // show the dropdown immediately on focus
+                maxItems: 5,
+                position: "text",         // place the dropdown near the typed text
+                closeOnSelect: false,          // keep the dropdown open after selecting a suggestion
+                highlightFirst: true
+            }
+        });
+    </script>
+}
+

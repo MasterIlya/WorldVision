@@ -171,12 +171,15 @@
                         }
                         else
                         {
-                    <h6 class="text-black-50" style="margin: auto; text-align: center">@Localizer["No comments"]</h6>
+                            <h6 class="text-black-50" style="margin: auto; text-align: center">@Localizer["No comments"]</h6>
                         }
                     </div>
-                    <div class="d-grid gap-2">
-                        <button class="btn btn-light text-black-50" type="button" onclick="ShowMore()" id="showMore">@Localizer["Show More"]</button>
-                    </div>
+                    if (Model.Comments.Count == 5)
+                    {
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-light text-black-50" type="button" onclick="ShowMore()" id="showMore">@Localizer["Show More"]</button>
+                        </div>
+                    }
                 }
 
             </div>

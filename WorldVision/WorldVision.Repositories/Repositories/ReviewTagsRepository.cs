@@ -23,5 +23,10 @@ namespace WorldVision.Repositories.Repositories
                 .Where(x => x.ReviewId == reviewId)
                 .ToListAsync();
         }
+
+        public async Task<List<ReviewTagItem>> GetAllTags()
+        {
+            return await GetItems().ToListAsync();
+        }
     }
 }

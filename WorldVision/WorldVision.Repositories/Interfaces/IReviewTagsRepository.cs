@@ -10,5 +10,6 @@ namespace WorldVision.Repositories.Interfaces
         public Task CreateAsync(ReviewTagItem item);
         public Task RemoveAsync(ReviewTagItem item);
         public Task<List<ReviewTagItem>> GetReviewTagsAsync(int reviewId);
+        public Task<List<ReviewTagItem>> GetAllTags();
     }
 }

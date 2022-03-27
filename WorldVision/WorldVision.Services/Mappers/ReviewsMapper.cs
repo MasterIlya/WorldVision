@@ -110,7 +110,7 @@ namespace WorldVision.Services.Mappers
             };
         }
 
-        public static CreateReviewModel Map(ReviewItem item)
+        public static CreateReviewModel Map(ReviewItem item, List<ReviewTagItem> tags)
         {
             if (item == null)
             {
@@ -123,7 +123,8 @@ namespace WorldVision.Services.Mappers
                 ReviewTypeId = item.ReviewTypeId,
                 Title = item.Title,
                 Content = item.Content,
-                AuthorScore = item.AuthorScore
+                AuthorScore = item.AuthorScore,
+                Tags = tags.Select(x => Map(x)).ToList()
             };
         }
 
@@ -254,6 +255,22 @@ namespace WorldVision.Services.Mappers
                 CreateDate = item.CreateDate.ToLocalTime().ToString()
             };
 
+        }
+
+        public static TagModel Map(ReviewTagItem item)
+        {
+            return new TagModel
+            {
+                Value = item.Tag
+            };
+        }
+
+        public static TagModel Map(string tag)
+        {
+            return new TagModel
+            {
+                Value = tag
+            };
         }
     }
 }

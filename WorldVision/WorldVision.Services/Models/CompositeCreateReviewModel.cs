@@ -8,5 +8,6 @@ namespace WorldVision.Services.Models
         public List<ReviewTypeModel> Types { get; set; }
         public List<ReviewImageModel> Images { get; set; }
         public string Email { get; set; }
+        public List<TagModel> Tags { get; set; }
     }
 }
