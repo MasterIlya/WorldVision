@@ -153,4 +153,7 @@
   <data name="Show More" xml:space="preserve">
     <value>Показать ещё</value>
   </data>
+  <data name="Tags" xml:space="preserve">
+    <value>Тэги</value>
+  </data>
 </root>

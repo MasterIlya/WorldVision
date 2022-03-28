@@ -23,6 +23,8 @@ namespace WorldVision.Repositories
             _conectionString = conectionString;
 
             Database.EnsureCreated();
+
+            ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

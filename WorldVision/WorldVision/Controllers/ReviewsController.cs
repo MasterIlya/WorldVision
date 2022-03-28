@@ -213,6 +213,17 @@ namespace WorldVision.Controllers
 
         [AllowAnonymous]
         [HttpGet]
+        public async Task<IActionResult> SearchByTag(string search, int currentPage)
+        {
+            var models = await _elasticSearchService.SearchReviewsByTagAsync(search, currentPage);
+
+            models.Search = search;
+
+            return View("SearchReviewsByTag", models);
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
         public async Task<IActionResult> GetCategories()
         {
             var categories = await _reviewsService.GetAllReviewTypesAsync();

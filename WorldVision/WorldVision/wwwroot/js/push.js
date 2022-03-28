@@ -38,7 +38,7 @@ function sendform(e) {
    
 hubConnection.on("Send", function (model) {
     skip++;
-
+    clearArea();
     let elem1 = document.createElement("blockquote");
     let elem2 = document.createElement("p");
     let elem3 = document.createElement("cite");

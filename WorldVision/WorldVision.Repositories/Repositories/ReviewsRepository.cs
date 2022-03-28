@@ -76,7 +76,7 @@ namespace WorldVision.Repositories.Repositories
             {
                 result = result.OrderByDescending(x => x.AuthorScore);
             }
-            else if (filter == FilterTypes.Assessment && sort == SortTypes.Descending)
+            else if (filter == FilterTypes.Assessment && sort == SortTypes.Ascending)
             {
                 result = result.OrderBy(x => x.AuthorScore);
             }

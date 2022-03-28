@@ -117,43 +117,25 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Comment" xml:space="preserve">
-    <value>Comment</value>
+  <data name="Author Score" xml:space="preserve">
+    <value>Author Score</value>
   </data>
-  <data name="Comments" xml:space="preserve">
-    <value>Comments</value>
-  </data>
-  <data name="Last reviews" xml:space="preserve">
-    <value>Last reviews in this category</value>
-  </data>
-  <data name="Leave comment" xml:space="preserve">
-    <value>Leave comment</value>
+  <data name="Create Date" xml:space="preserve">
+    <value>Create Date</value>
   </data>
   <data name="Next" xml:space="preserve">
     <value>Next</value>
   </data>
-  <data name="No comments" xml:space="preserve">
-    <value>There are no comments on this review. Leave it first:)</value>
-  </data>
   <data name="PageName" xml:space="preserve">
-    <value>Review</value>
+    <value>Search Result</value>
   </data>
   <data name="Previous" xml:space="preserve">
     <value>Previous</value>
   </data>
-  <data name="Publish" xml:space="preserve">
-    <value>Publish</value>
+  <data name="Review Type" xml:space="preserve">
+    <value>Review Type</value>
   </data>
-  <data name="Rating" xml:space="preserve">
-    <value>Rating</value>
-  </data>
-  <data name="Score" xml:space="preserve">
-    <value>Score</value>
-  </data>
-  <data name="Show More" xml:space="preserve">
-    <value>Show More</value>
-  </data>
-  <data name="Tags" xml:space="preserve">
-    <value>Tags</value>
+  <data name="Title" xml:space="preserve">
+    <value>Title</value>
   </data>
 </root>

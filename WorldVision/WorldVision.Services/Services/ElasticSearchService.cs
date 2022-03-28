@@ -1,4 +1,5 @@
 ﻿using Nest;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using WorldVision.Services.IServices;
@@ -35,26 +36,61 @@ namespace WorldVision.Services.Services
             {
                 currentPage = DefaultCurrentPage;
             }
-
+            var take = DefaultReviewsCount;
             var skip = (currentPage - 1) * DefaultReviewsCount;
             var searchResponse = await _client.SearchAsync<ReviewModel>(s => s
                 .Sort(x => x.Descending(a => a.CreateDate))
                 .Skip(skip)
-                .Take(DefaultReviewsCount)
+                .Take(take)
                 .Query(q => q
                       .MultiMatch(m => m.Fields(x => x.Fields(a => a.Title, b => b.Content, c => c.ReviewType, i => i.Tags, f => f.UserName))
                                  .Query(search))));
 
-            var pageCount = await GetCountAsync(search);
-            var model = ReviewsMapper.Map(searchResponse.Documents.ToList(), currentPage, pageCount);
+            var elementsCount = await GetCountAsync(search);
+            var pageCount = Convert.ToInt32(Math.Ceiling((double)elementsCount / take));
+            var model = ReviewsMapper.Map(searchResponse.Documents.ToList(), pageCount, currentPage);
 
             return model;
+        }
+
+        public async Task<PaginationReviewModel> SearchReviewsByTagAsync(string search, int currentPage)
+        {
+            if (currentPage == 0)
+            {
+                currentPage = DefaultCurrentPage;
+            }
+            var take = DefaultReviewsCount;
+            var skip = (currentPage - 1) * DefaultReviewsCount;
+            var searchResponse = await _client.SearchAsync<ReviewModel>(s => s
+                .Sort(x => x.Descending(a => a.CreateDate))
+                .Skip(skip)
+                .Take(take)
+                .Query(q => q
+                      .MultiMatch(m => m.Fields(x => x.Fields(i => i.Tags))
+                                 .Query(search))));
+
+            var elementsCount = await GetCountByTagAsync(search);
+            var pageCount = Convert.ToInt32(Math.Ceiling((double)elementsCount / take));
+            var model = ReviewsMapper.Map(searchResponse.Documents.ToList(), pageCount, currentPage);
+
+            return model;
+        }
+
+
+        public async Task<int> GetCountByTagAsync(string search)
+        {
+
+            var searchResponse = await _client.SearchAsync<ReviewModel>(s => s.Size(2000).Query(q => q
+                      .MultiMatch(m => m.Fields(x => x.Fields(i => i.Tags))
+                                 .Query(search))));
+
+            return searchResponse.Documents.Count;
         }
 
         public async Task<int> GetCountAsync(string search)
         {
 
-            var searchResponse = await _client.SearchAsync<ReviewModel>(s => s.Query(q => q
+            var searchResponse = await _client.SearchAsync<ReviewModel>(s => s.Size(2000).Query(q => q
                       .MultiMatch(m => m.Fields(x => x.Fields(a => a.Title, b => b.Content, c => c.ReviewType, i => i.Tags, f => f.UserName))
                                  .Query(search))));
 

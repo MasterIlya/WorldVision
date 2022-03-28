@@ -76,6 +76,7 @@ namespace WorldVision.Services.Mappers
             {
                 return null;
             }
+            var a = $"{users[item.UserId].FName} {users[item.UserId].LName}";
             return new ReviewModel
             {
                 ReviewId = item.ReviewId,

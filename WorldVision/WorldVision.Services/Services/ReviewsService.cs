@@ -22,7 +22,7 @@ namespace WorldVision.Services.Services
         private readonly IReviewRaitingRepository _reviewLikeCounterRepository;
         private readonly IReviewCommentsRepository _reviewCommentsRepository;
         private const int DefaultReviewsCount = 10;
-        private const int DefaultTagsCount = 20;
+        private const int DefaultTagsCount = 30;
         private const int DefaultCurrentPage = 1;
 
         public ReviewsService(IReviewsRepository reviewsRepository, IReviewTypesRepository reviewTypesRepository,
@@ -243,7 +243,7 @@ namespace WorldVision.Services.Services
             var review = ReviewsMapper.Map(reviewItem, types, fullName, tags, rating);
             var images = await GetImagesAsync(reviewId);
             var lastReviews = await GetReviewsInCategoryAsync(typeId);
-            var comments = commentItems.Select(x => ReviewsMapper.Map(x, usersWithComments.FirstOrDefault(x => x.UserId == x.UserId))).ToList();
+            var comments = commentItems.Select(x => ReviewsMapper.Map(x, usersWithComments.FirstOrDefault(y => y.UserId == x.UserId))).ToList();
 
             var compositeModel = ReviewsMapper.Map(review, images, lastReviews, comments, rating);
 
@@ -269,7 +269,7 @@ namespace WorldVision.Services.Services
             var images = await GetImagesAsync(reviewId);
             var lastReviews = await GetReviewsInCategoryAsync(typeId);
             var currentUserLike = await GetLikeCurrentUserAsync(currentUser.UserId, reviewId);
-            var comments = commentItems.Select(x => ReviewsMapper.Map(x, usersWithComments.FirstOrDefault(x => x.UserId == x.UserId))).ToList();
+            var comments = commentItems.Select(x => ReviewsMapper.Map(x, usersWithComments.FirstOrDefault(y => y.UserId == x.UserId))).ToList();
 
             var compositeModel = ReviewsMapper.Map(review, images, lastReviews, comments, rating, currentUserLike);
 
@@ -330,7 +330,10 @@ namespace WorldVision.Services.Services
             var lastReviews = lastReviewItems.Select(x => ReviewsMapper.Map(x, reviewTypes, usersToDict, likes)).ToList();
 
             var popularItems = await _reviewLikeCounterRepository.GetPopularReviewsAsync(take);
-            var popularReviews = popularItems.Select(x => ReviewsMapper.Map(x, reviewTypes, usersToDict)).ToList();
+            var userIdsForPopular = popularItems.Select(x => x.UserId).Distinct().ToList();
+            var usersForPopular = await _usersRepository.GetUsersAsync(userIdsForPopular);
+            var usersForPopularDict = usersForPopular.ToDictionary(x => x.UserId);
+            var popularReviews = popularItems.Select(x => ReviewsMapper.Map(x, reviewTypes, usersForPopularDict)).ToList();
 
             var model = ReviewsMapper.Map(lastReviews, popularReviews, tags);
 
