@@ -150,6 +150,9 @@
   <data name="Next" xml:space="preserve">
     <value>Следующая</value>
   </data>
+  <data name="NoReviews" xml:space="preserve">
+    <value>У вас нет ни одного обзора</value>
+  </data>
   <data name="PageName" xml:space="preserve">
     <value>Обзоры пользователя</value>
   </data>

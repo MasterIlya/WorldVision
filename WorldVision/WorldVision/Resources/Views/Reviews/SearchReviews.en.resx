@@ -126,6 +126,9 @@
   <data name="Next" xml:space="preserve">
     <value>Next</value>
   </data>
+  <data name="Not found" xml:space="preserve">
+    <value>Not found</value>
+  </data>
   <data name="PageName" xml:space="preserve">
     <value>Search Result</value>
   </data>

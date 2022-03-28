@@ -6,82 +6,93 @@
 }
 
 <body>
-    <div class="container">
-        <table class="table table-success table-striped">
-            <thead>
-                <tr style="text-align: center">
-                    <th scope="col">#</th>
-                    <th scope="col">@Localizer["Title"]</th>
-                    <th scope="col">@Localizer["Review Type"]</th>
-                    <th scope="col">@Localizer["Author Score"]</th>
-                    <th scope="col">@Localizer["Create Date"]</th>
-                </tr>
-            </thead>
-            <tbody style="text-align: center; ">
-                @for (var i = 0; i < Model.Models.Count; i++)
-                {
-                    <tr>
-                        <th scope="row">@((Model.CurrentPage - 1) * 10 + 1 + i)</th>
-                        <td>
-                            @if (User.Identity.IsAuthenticated)
-                            {
-                                <a class="" asp-action="getreview" asp-controller="reviews" asp-route-currentEmail="@User.FindFirstValue(ClaimTypes.Email)"
-                                   asp-route-type="@Model.Models[i].ReviewType" asp-route-reviewId="@Model.Models[i].ReviewId">@Model.Models[i].Title</a>
-                            }
-                            else
-                            {
-                                <a class="" asp-action="getreviewnoauth" asp-controller="reviews"
-                                   asp-route-type="@Model.Models[i].ReviewType" asp-route-reviewId="@Model.Models[i].ReviewId">@Model.Models[i].Title</a>
-                            }
+    @if (Model.Models.Count != 0)
+    {
 
-                        </td>
-                        <td>@Model.Models[i].ReviewType</td>
-                        <td>@Model.Models[i].AuthorScore</td>
-                        <td>@Model.Models[i].CreateDate.ToShortDateString()</td>
+
+        <div class="container">
+            <table class="table table-success table-striped">
+                <thead>
+                    <tr style="text-align: center">
+                        <th scope="col">#</th>
+                        <th scope="col">@Localizer["Title"]</th>
+                        <th scope="col">@Localizer["Review Type"]</th>
+                        <th scope="col">@Localizer["Author Score"]</th>
+                        <th scope="col">@Localizer["Create Date"]</th>
                     </tr>
+                </thead>
+                <tbody style="text-align: center; ">
+                    @for (var i = 0; i < Model.Models.Count; i++)
+                    {
+                        <tr>
+                            <th scope="row">@((Model.CurrentPage - 1) * 10 + 1 + i)</th>
+                            <td>
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <a class="" asp-action="getreview" asp-controller="reviews" asp-route-currentEmail="@User.FindFirstValue(ClaimTypes.Email)"
+                                       asp-route-type="@Model.Models[i].ReviewType" asp-route-reviewId="@Model.Models[i].ReviewId">@Model.Models[i].Title</a>
+                                }
+                                else
+                                {
+                                    <a class="" asp-action="getreviewnoauth" asp-controller="reviews"
+                                       asp-route-type="@Model.Models[i].ReviewType" asp-route-reviewId="@Model.Models[i].ReviewId">@Model.Models[i].Title</a>
+                                }
+
+                            </td>
+                            <td>@Model.Models[i].ReviewType</td>
+                            <td>@Model.Models[i].AuthorScore</td>
+                            <td>@Model.Models[i].CreateDate.ToShortDateString()</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                @if (Model.CurrentPage == 1)
+                {
+                    <li class="page-item disabled">
+                        <a class="page-link" asp-action="Search" asp-controller="reviews"
+                           asp-route-currentPage="@(Model.CurrentPage - 1)" asp-route-search="@Model.Search" aria-disabled="true">@Localizer["Previous"]</a>
+                    </li>
                 }
-            </tbody>
-        </table>
-    </div>
-    <nav aria-label="Page navigation example">
-        <ul class="pagination justify-content-center">
-            @if (Model.CurrentPage == 1)
-            {
-                <li class="page-item disabled">
-                    <a class="page-link" asp-action="Search" asp-controller="reviews"
-                       asp-route-currentPage="@(Model.CurrentPage - 1)" asp-route-search="@Model.Search" aria-disabled="true">@Localizer["Previous"]</a>
-                </li>
-            }
-            else
-            {
-                <li class="page-item">
-                    <a class="page-link" asp-action="Search" asp-controller="reviews"
-                       asp-route-currentPage="@(Model.CurrentPage - 1)" asp-route-search="@Model.Search" aria-disabled="true">@Localizer["Previous"]</a>
-                </li>
-            }
-            @for (int i = 0; i < Model.CountOfPages; i++)
-            {
-                <li class="page-item">
-                    <a class="page-link" asp-action="Search" asp-controller="reviews"
-                       asp-route-currentPage="@(i + 1)" asp-route-search="@Model.Search">@(i + 1)</a>
-                </li>
-            }
-            @if (Model.CurrentPage == Model.CountOfPages || Model.CountOfPages == 1)
-            {
-                <li class="page-item disabled">
-                    <a class="page-link" asp-action="Search" asp-controller="reviews"
-                       asp-route-currentPage="@(Model.CurrentPage + 1)" asp-route-search="@Model.Search">@Localizer["Next"]</a>
-                </li>
-            }
-            else
-            {
-                <li class="page-item">
-                    <a class="page-link" asp-action="Search" asp-controller="reviews"
-                       asp-route-currentPage="@(Model.CurrentPage + 1)" asp-route-search="@Model.Search">@Localizer["Next"]</a>
-                </li>
-            }
-        </ul>
-    </nav>
+                else
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-action="Search" asp-controller="reviews"
+                           asp-route-currentPage="@(Model.CurrentPage - 1)" asp-route-search="@Model.Search" aria-disabled="true">@Localizer["Previous"]</a>
+                    </li>
+                }
+                @for (int i = 0; i < Model.CountOfPages; i++)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-action="Search" asp-controller="reviews"
+                           asp-route-currentPage="@(i + 1)" asp-route-search="@Model.Search">@(i + 1)</a>
+                    </li>
+                }
+                @if (Model.CurrentPage == Model.CountOfPages || Model.CountOfPages == 1)
+                {
+                    <li class="page-item disabled">
+                        <a class="page-link" asp-action="Search" asp-controller="reviews"
+                           asp-route-currentPage="@(Model.CurrentPage + 1)" asp-route-search="@Model.Search">@Localizer["Next"]</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-action="Search" asp-controller="reviews"
+                           asp-route-currentPage="@(Model.CurrentPage + 1)" asp-route-search="@Model.Search">@Localizer["Next"]</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
+    else
+    {
+
+        <p style="text-align:center; margin-top: 10px"><img width="300" height="300" src="https://res.cloudinary.com/dtomjloda/image/upload/v1648480739/399-20211129_181345_jgehde.png" /></p>
+        <h2 style="text-align: center; margin-top: 10px">@Localizer["Not found"]</h2>
+    }
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
     <script type="text/javascript" src="@Url.Content("~/js/bootstrap.bundle.min.js")"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>

@@ -150,6 +150,9 @@
   <data name="Next" xml:space="preserve">
     <value>Next</value>
   </data>
+  <data name="NoReviews" xml:space="preserve">
+    <value>You don't have a single review</value>
+  </data>
   <data name="PageName" xml:space="preserve">
     <value>Users Reviews</value>
   </data>
